@@ -16,4 +16,6 @@ public:
 	Vec3 trace(const Ray& r, int recursionLevel = 0) const;
 	//Adiciona um objeto a cena.
 	void add(Object* object);
+	int getNumberObjects();
+	Object* getObject(int object);
 };

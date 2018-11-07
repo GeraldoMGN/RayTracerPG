@@ -24,3 +24,13 @@ void Image::SaveAsPPM() const {
 	}
 	ofs.close();
 }
+
+int Image::getWidth() const
+{
+	return this->width;
+}
+
+int Image::getHeight() const
+{
+	return this->height;
+}
