@@ -14,6 +14,15 @@ double Vec3::getZ() const {
 
 Vec3::Vec3(double x, double y, double z) : x(x), y(y), z(z) {}
 
+double Vec3::length() const
+{
+	return sqrt(
+		(this->x * this->x) +
+		(this->y * this->y) +
+		(this->z * this->z)
+	);
+}
+
 Vec3 Vec3::operator+(const Vec3 rhs) const {
 	return Vec3(x + rhs.x, y + rhs.y, z + rhs.z);
 }

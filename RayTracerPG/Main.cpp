@@ -4,13 +4,27 @@
 #include "Geometry.h"
 
 #include <float.h>
+#include <iostream>
 
 
 //ISSO DEVERIA SER LIDO DE UM ARQUIVO
 int imageWidth = 400;
 int ImageHeight = 400;
 
+void render(Image& image, Scene& scene) {
+	for (int i = 0; i < image.getHeight(); i++) {
+		for (int j = 0; j < image.getWidth(); j++) {
+			//TODO: primary ray
 
+			double nearestIntersec = DBL_MAX;
+			for (int k = 0; k < scene.getNumberObjects(); k++) {
+				double intersec = DBL_MAX;
+				//if it intersects and is the intersection is less than nearestIntersec
+				nearestIntersec = intersec;
+			}
+		}
+	}
+}
 
 int main() {
 	//inicializando a imagem
@@ -25,19 +39,4 @@ int main() {
 	render(image, scene);
 
 	return 0;
-}
-
-void render(Image& image, Scene& scene) {
-	for (int i = 0; i < image.getHeight(); i++) {
-		for (int j = 0; j < image.getWidth(); j++) {
-			//TODO: primary ray
-
-			double nearestIntersec = DBL_MAX;
-			for (int k = 0; k < scene.getNumberObjects(); k++) {
-				double intersec = DBL_MAX;
-				//if it intersects and is the intersection is less than nearestIntersec
-					nearestIntersec = intersec;
-			}
-		}
-	}
 }
