@@ -7,6 +7,7 @@ private:
 	double x, y, z;
 public:
 	Vec3(double x, double y, double z);
+	Vec3(double xyz);
 
 	double length() const;
 	void normalize();
