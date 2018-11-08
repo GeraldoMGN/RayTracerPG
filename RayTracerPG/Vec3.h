@@ -9,6 +9,7 @@ public:
 	Vec3(double x, double y, double z);
 
 	double length() const;
+	void normalize();
 
 	double getX() const;
 	double getY() const;
@@ -17,4 +18,5 @@ public:
 	Vec3 operator+(const Vec3 rhs) const;
 	Vec3 operator*(const double rhs) const;
 	Vec3 operator*(const Vec3 rhs) const;
+	Vec3 operator/(const double rhs) const;
 };
