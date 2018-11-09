@@ -6,3 +6,8 @@ double Camera::getFov() const
 {
 	return this->fov;
 }
+
+Vec3 Camera::getPos() const
+{
+	return this->position;
+}

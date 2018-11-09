@@ -11,8 +11,8 @@
 double const PI = 3.14159265359;
 
 //ISSO DEVERIA SER LIDO DE UM ARQUIVO
-int imageWidth = 400;
-int imageHeight = 400;
+int imageWidth = 1280;
+int imageHeight = 720;
 
 void render(Image& image, Scene& scene, Camera& camera) {
 	for (int y = 0; y < image.getHeight(); y++) {
@@ -21,7 +21,7 @@ void render(Image& image, Scene& scene, Camera& camera) {
 			double aspectRatio = (double)imageWidth / (double)imageHeight;
 			double Px = (2 * ((x + 0.5) / (double)imageWidth) - 1) * tan(camera.getFov() / 2 * PI / 180) * aspectRatio;
 			double Py = (1 - 2 * ((y + 0.5) / (double)imageHeight) * tan(camera.getFov() / 2 * PI / 180));
-			Vec3 origin(0.0f);
+			Vec3 origin = camera.getPos();
 			Vec3 direction(Px, Py, -1);
 			direction.normalize();
 			Ray ray(origin, direction);
@@ -52,7 +52,7 @@ int main() {
 	Sphere sphere1Geometry = Sphere(Vec3(10.0f, 10.0f, -50.0f), 10.0f);
 	Material sphere1Material = Material(1.0f, 1.0f, 1.0f, 1.0f, Vec3(1.0f));
 	Object sphere1 = Object(&sphere1Geometry, &sphere1Material);
-	Sphere sphere2Geometry = Sphere(Vec3(-10.0f, -10.0f, -50.0f), 10.0f);
+	Sphere sphere2Geometry = Sphere(Vec3(-10.0f, -10.0f, -30.0f), 10.0f);
 	Object sphere2 = Object(&sphere2Geometry, &sphere1Material);
 	Scene scene;
 	scene.add(&sphere1);
