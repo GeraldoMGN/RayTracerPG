@@ -8,7 +8,6 @@
 #include <iostream>
 
 //consts
-double const PI = 3.14159265359;
 
 //ISSO DEVERIA SER LIDO DE UM ARQUIVO
 int imageWidth = 1280;
@@ -17,15 +16,8 @@ int imageHeight = 720;
 void render(Image& image, Scene& scene, Camera& camera) {
 	for (int y = 0; y < image.getHeight(); y++) {
 		for (int x = 0; x < image.getWidth(); x++) {
-			//camera fixa em 0,0,0 (necessita de uma matriz cameraToWorld)
-			double aspectRatio = (double)imageWidth / (double)imageHeight;
-			double Px = (2 * ((x + 0.5) / (double)imageWidth) - 1) * tan(camera.getFov() / 2 * PI / 180) * aspectRatio;
-			double Py = (1 - 2 * ((y + 0.5) / (double)imageHeight) * tan(camera.getFov() / 2 * PI / 180));
-			Vec3 origin = camera.getPos();
-			Vec3 direction(Px, Py, -1);
-			direction.normalize();
-			Ray ray(origin, direction);
-
+			Ray ray = camera.getRay(x, y, image.getHeight(), image.getWidth());
+			
 			double nearestIntersec = DBL_MAX;
 			for (int k = 0; k < scene.getNumberObjects(); k++) {
 				double intersec = DBL_MAX;
