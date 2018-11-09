@@ -41,13 +41,19 @@ Vec3 Vec3::operator*(const double rhs) const {
 	return Vec3(x * rhs, y * rhs, z * rhs);
 }
 
-Vec3 Vec3::operator*(const Vec3 rhs) const {
+
+Vec3 Vec3::operator/(const double rhs) const
+{
+	return Vec3(this->x / rhs, this->y / rhs, this->z / rhs);
+}
+
+Vec3 Vec3::crossProduct(const Vec3 rhs) const {
 	return Vec3(y*rhs.getZ() - z * rhs.getY(),	//a2b3 − a3b2
 		z*rhs.getX() - x * rhs.getZ(),			//a3b1 − a1b3
 		x*rhs.getY() - y * rhs.getX());			//a1b2 − a2b1
 }
 
-Vec3 Vec3::operator/(const double rhs) const
+double Vec3::dotProduct(const Vec3 rhs) const
 {
-	return Vec3(this->x / rhs, this->y / rhs, this->z / rhs);
+	return (this->x * rhs.getX()) + (this->y * rhs.getY()) + (this->z * rhs.getZ());
 }

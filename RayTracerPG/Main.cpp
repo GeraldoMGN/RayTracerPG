@@ -16,10 +16,11 @@ int imageHeight = 400;
 void render(Image& image, Scene& scene, Camera& camera) {
 	for (int y = 0; y < image.getHeight(); y++) {
 		for (int x = 0; x < image.getWidth(); x++) {
+			//camera fixa em 0,0,0
 			double aspectRatio = (double)imageWidth / (double)imageHeight;
 			double Px = (2 * ((x + 0.5) / imageWidth) - 1) * tan(camera.getFov() / 2 * PI / 180) * aspectRatio;
 			double Py = (1 - 2 * ((y + 0.5) / imageHeight) * tan(camera.getFov() / 2 * PI / 180));
-			Vec3 origin(0.0f, 0.0f, 0.0f);
+			Vec3 origin(0.0f);
 			Vec3* direction = new Vec3(Px, Py, -1);
 			direction->normalize();
 
