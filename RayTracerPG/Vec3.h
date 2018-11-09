@@ -17,6 +17,7 @@ public:
 	double getZ() const;
 
 	Vec3 operator+(const Vec3 rhs) const;
+	Vec3 operator-(const Vec3 rhs) const;
 	Vec3 operator*(const double rhs) const;
 	Vec3 operator/(const double rhs) const;
 	
