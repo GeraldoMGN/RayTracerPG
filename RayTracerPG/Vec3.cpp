@@ -25,12 +25,13 @@ double Vec3::length() const
 	);
 }
 
-void Vec3::normalize()
+Vec3 Vec3::normalize() const
 {
 	double length = this->length();
-	this->x = x / length;
-	this->y = y / length;
-	this->z = z / length;
+	double normalizedX = x / length;
+	double normalizedY = y / length;
+	double normalizedZ = z / length;
+	return Vec3(normalizedX, normalizedY, normalizedZ);
 }
 
 Vec3 Vec3::operator+(const Vec3 rhs) const {

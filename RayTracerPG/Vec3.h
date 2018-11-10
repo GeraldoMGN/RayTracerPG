@@ -10,7 +10,7 @@ public:
 	Vec3(double xyz);
 
 	double length() const;
-	void normalize();
+	Vec3 normalize() const;
 
 	double getX() const;
 	double getY() const;
