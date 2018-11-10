@@ -7,8 +7,8 @@ Camera::Camera(Vec3 position, Vec3 target, Vec3 up, double fov, double f) : posi
 Ray Camera::getRay(double x, double y, int width, int height) const
 {
 	//TODO: implementar distancia do plano de imagem
-	//TODO: resolver o problema da imagem ficar deslocada com aspect ratios diferentes
 	double aspectRatio = (double)width / (double)height;
+	//std::cout << "Aspect Ratio: " << aspectRatio << std::endl;
 	double Px = (2 * ((x + 0.5) / (double)width) - 1) * tan(this->fov / 2 * PI / 180) * aspectRatio;
 	double Py = (1 - 2 * ((y + 0.5) / (double)height) * tan(this->fov / 2 * PI / 180));
 	
