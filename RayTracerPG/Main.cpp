@@ -10,13 +10,13 @@
 //consts
 
 //ISSO DEVERIA SER LIDO DE UM ARQUIVO
-int imageWidth = 720;
+int imageWidth = 1280;
 int imageHeight = 720;
 
 void render(Image& image, Scene& scene, Camera& camera) {
 	for (int y = 0; y < image.getHeight(); y++) {
 		for (int x = 0; x < image.getWidth(); x++) {
-			Ray ray = camera.getRay(x, y, image.getHeight(), image.getWidth());
+			Ray ray = camera.getRay(x, y, image.getWidth(), image.getHeight());
 			
 			double nearestIntersec = DBL_MAX;
 			for (int k = 0; k < scene.getNumberObjects(); k++) {
