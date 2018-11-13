@@ -4,5 +4,6 @@ Object::Object(Geometry* geometry, Material* materal) : geometry(geometry), mate
 
 bool Object::intersect(const Ray& r, ObjectIntersection* info)
 {
+	info->o = this;
 	return geometry->intersect(r, info);
 }

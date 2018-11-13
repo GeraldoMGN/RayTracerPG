@@ -31,15 +31,14 @@ bool Sphere::intersect(const Ray& r, ObjectIntersection* info) const
 	double t1 = tca + thc;
 	if (t0 < 0.0f && t1 < 0.0f) //ambas interseções atrás da camera 
 		return false;
-	if (t0 > t1 && t1 > 0.0f) 
+	
+	//atribui os valores à estrutura de dados da interseção
+	if (t0 > t1 && t1 > 0.0f)
 		info->t = t1;
-	if (t0 < t1 && t0 > 0.0f) 
+	if (t0 < t1 && t0 > 0.0f)
 		info->t = t0;
+	info->p = r.getOrigin() + (r.getDirection() * info->t);
+	info->n = (info->p - center).normalize();
 	return true;
 }
 
-Vec3 Sphere::getPoint() const
-{
-	//TODO
-	return Vec3(1.0f,1.0f,1.0f);
-}
