@@ -7,7 +7,7 @@ void Scene::add(Object* object)
 
 int Scene::getNumberObjects()
 {
-	return this->objects.size();
+	return (int) this->objects.size();
 }
 
 Object* Scene::getObject(int object)

@@ -13,25 +13,39 @@
 int imageWidth = 1280;
 int imageHeight = 720;
 
+//calcula a cor do pixel
+Vec3* shade(ObjectIntersection* intersecInfo) {
+	//método temporário
+	if (intersecInfo == NULL)
+		return new Vec3(0.0f);
+	return new Vec3(1.0f);
+}
+
+//Pega o ObjectIntersection com as informações da interseção mais proxima
+ObjectIntersection* castRay(Ray& ray, Scene& scene) {
+	ObjectIntersection* intersecInfo = new ObjectIntersection{DBL_MAX, Vec3(0.0f), Vec3(0.0f), NULL};
+	
+	//compara com cada objeto da cena para ver se há ponto de interseção mais próximo que o anterior
+	for (int k = 0; k < scene.getNumberObjects(); k++) {
+		ObjectIntersection* tempInfo = new ObjectIntersection{0.0f, Vec3(0.0f), Vec3(0.0f), NULL};
+		if (scene.getObject(k)->intersect(ray, tempInfo)) {
+			if (tempInfo->t < intersecInfo->t) {
+				intersecInfo = tempInfo;
+			}
+		}
+	}
+	if (intersecInfo->t == DBL_MAX)
+		return NULL;
+	return intersecInfo;
+}
+
 void render(Image& image, Scene& scene, Camera& camera) {
 	for (int y = 0; y < image.getHeight(); y++) {
 		for (int x = 0; x < image.getWidth(); x++) {
 			Ray ray = camera.getRay(x, y, image.getWidth(), image.getHeight());
-			
-			double nearestIntersec = DBL_MAX;
-			for (int k = 0; k < scene.getNumberObjects(); k++) {
-				double intersec = DBL_MAX;
-				//if it intersects and is the intersection is less than nearestIntersec
-				ObjectIntersection* intersecInfo = new ObjectIntersection{ 0.0f, Vec3(0.0f), Vec3(0.0f), NULL };
-				if (scene.getObject(k)->intersect(ray, intersecInfo)) {
-					if (intersecInfo->t < nearestIntersec) {
-						image.SetPixel(x, y, new Vec3(1.0f));
-						nearestIntersec = intersecInfo->t;
-					}
-				}
-			}
-			if (nearestIntersec == DBL_MAX)
-				image.SetPixel(x, y, new Vec3(0.0f));
+			ObjectIntersection* intersecInfo = castRay(ray, scene);
+			Vec3* pixelColor = shade(intersecInfo);
+			image.SetPixel(x, y, pixelColor);
 		}
 	}
 	image.SaveAsPPM();
