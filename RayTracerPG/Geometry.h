@@ -14,7 +14,7 @@ public:
 };
 
 class Sphere : public Geometry {
-public:
+private:
 	Vec3 center;
 	double radius;
 public:
