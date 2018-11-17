@@ -1,5 +1,7 @@
 #include "Light.h"
 
+Light::Light(Vec3 position, Vec3 color, double intensity) : position(position), color(color), intensity(intensity) {}
+
 Vec3 Light::getPosition() const
 {
 	return this->position;
