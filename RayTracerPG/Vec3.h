@@ -19,6 +19,8 @@ public:
 	Vec3 operator+(const Vec3 rhs) const;
 	Vec3 operator-(const Vec3 rhs) const;
 	Vec3 operator*(const double rhs) const;
+	//multiplica cada componente do vetor pelo correspondente do outro vetor
+	Vec3 operator*(const Vec3 rhs) const;
 	Vec3 operator/(const double rhs) const;
 	
 	Vec3 crossProduct(const Vec3 rhs) const;

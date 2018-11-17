@@ -47,6 +47,11 @@ Vec3 Vec3::operator*(const double rhs) const {
 	return Vec3(x * rhs, y * rhs, z * rhs);
 }
 
+Vec3 Vec3::operator*(const Vec3 rhs) const
+{
+	return Vec3(this->x * rhs.getX(), this->y * rhs.getY(), this->z * rhs.getZ());
+}
+
 
 Vec3 Vec3::operator/(const double rhs) const
 {
