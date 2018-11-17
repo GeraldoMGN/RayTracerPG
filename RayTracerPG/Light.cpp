@@ -7,7 +7,7 @@ Vec3 Light::getPosition() const
 
 Vec3 Light::getColor() const
 {
-	return this->color);
+	return this->color;
 }
 
 double Light::getIntensity() const

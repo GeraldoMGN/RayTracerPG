@@ -8,21 +8,22 @@
 #include <algorithm>
 #include <iostream>
 
-//consts
-
 //ISSO DEVERIA SER LIDO DE UM ARQUIVO
 int imageWidth = 1920;
 int imageHeight = 1080;
+
+//Quando os vetores estão normalizados, retorna 1 se tiver paralelo a 0 caso esteja perpendicular.
+double facingRatio(Vec3 vector1, Vec3 vector2) {
+	return std::max(0.0, vector1.dotProduct(vector2));
+}
 
 //calcula a cor do pixel
 Vec3* shade(Ray& ray, ObjectIntersection* intersecInfo) {
 	if (intersecInfo == NULL)
 		return new Vec3(0.5f);
 	
-	//Já que os vetores estão normalizados, retorna 1 se tiver paralelo a 0 caso esteja perpendicular.
-	double facingRation = std::max(0.0, intersecInfo->n.dotProduct(Vec3(0.0) - ray.getDirection()));
 	//retorno temporário
-	return new Vec3(facingRation);
+	return new Vec3(facingRatio(intersecInfo->n, Vec3(0.0) - ray.getDirection()));
 }
 
 //Pega o ObjectIntersection com as informações da interseção mais proxima
