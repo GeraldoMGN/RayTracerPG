@@ -15,4 +15,7 @@ public:
 	/*Retorna true se r intersecta o objeto e falso caso contrário
 	Guarda possíveis informações sobre a intersecção em info, caso seja provido.*/
 	bool intersect(const Ray& r, ObjectIntersection* info = nullptr);
+
+	Geometry* getGeometry() const;
+	Material* getMaterial() const;
 };
