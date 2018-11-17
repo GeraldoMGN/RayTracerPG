@@ -14,7 +14,7 @@ int imageHeight = 1080;
 
 //Quando os vetores estão normalizados, retorna 1 se tiver paralelo a 0 caso esteja perpendicular.
 double facingRatio(Vec3 vector1, Vec3 vector2) {
-	return std::max(0.0, vector1.dotProduct(vector2));
+	return std::max(0.0, vector1.dotProduct(Vec3(0.0) - vector2));
 }
 
 //calcula a cor do pixel
@@ -23,7 +23,7 @@ Vec3* shade(Ray& ray, ObjectIntersection* intersecInfo) {
 		return new Vec3(0.5f);
 	
 	//retorno temporário
-	return new Vec3(facingRatio(intersecInfo->n, Vec3(0.0) - ray.getDirection()));
+	return new Vec3(facingRatio(intersecInfo->n, ray.getDirection()));
 }
 
 //Pega o ObjectIntersection com as informações da interseção mais proxima
@@ -66,8 +66,12 @@ int main() {
 	Sphere sphere2Geometry = Sphere(Vec3(-10.0f, -10.0f, 40.0f), 10.0f);
 	Object sphere2 = Object(&sphere2Geometry, &sphere1Material);
 	Scene scene;
-	scene.add(&sphere1);
-	scene.add(&sphere2);
+	scene.addObject(&sphere1);
+	scene.addObject(&sphere2);
+	//luzes
+	Light light = Light(Vec3(50.0f), Vec3(1.0f), 5.0f);
+	scene.addLight(&light);
+	//camera
 	Camera camera = Camera(Vec3(0.0f), Vec3(0.0f, 0.0f, 1.0f),
 		Vec3(0.0f, 1.0f, 0.0f), 90, 1.0f);
 	camera.setCamToWorldMatrix();
