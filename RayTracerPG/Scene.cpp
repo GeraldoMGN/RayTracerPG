@@ -1,6 +1,6 @@
 #include "Scene.h"
 
-void Scene::add(Object* object)
+void Scene::addObject(Object* object)
 {
 	this->objects.push_back(object);
 }
@@ -14,3 +14,19 @@ Object* Scene::getObject(int object)
 {
 	return this->objects.at(object);
 }
+
+void Scene::addLight(Light* light)
+{
+	this->lights.push_back(light);
+}
+
+int Scene::getNumberLights()
+{
+	return (int)this->objects.size();
+}
+
+Light* Scene::getLight(int light)
+{
+	return this->lights.at(light);
+}
+
