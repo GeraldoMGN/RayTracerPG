@@ -22,7 +22,7 @@ void Scene::addLight(Light* light)
 
 int Scene::getNumberLights()
 {
-	return (int)this->objects.size();
+	return (int)this->lights.size();
 }
 
 Light* Scene::getLight(int light)

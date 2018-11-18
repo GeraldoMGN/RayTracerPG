@@ -17,15 +17,6 @@ double facingRatio(Vec3 vector1, Vec3 vector2) {
 	return std::max(0.0, vector1.dotProduct(Vec3(0.0) - vector2));
 }
 
-//calcula a cor do pixel
-Vec3* shade(Ray& ray, ObjectIntersection* intersecInfo) {
-	if (intersecInfo == NULL)
-		return new Vec3(0.5f);
-	
-	//retorno temporário
-	return new Vec3(facingRatio(intersecInfo->n, ray.getDirection()));
-}
-
 //Pega o ObjectIntersection com as informações da interseção mais proxima
 ObjectIntersection* castRay(Ray& ray, Scene& scene) {
 	ObjectIntersection* intersecInfo = new ObjectIntersection{DBL_MAX, Vec3(0.0f), Vec3(0.0f), NULL};
@@ -44,12 +35,39 @@ ObjectIntersection* castRay(Ray& ray, Scene& scene) {
 	return intersecInfo;
 }
 
+//calcula a cor do pixel
+Vec3* shade(Ray& ray, ObjectIntersection* intersecInfo, Scene& scene) {
+	if (intersecInfo == NULL)
+		return new Vec3(0.5f);
+
+	Vec3 color = Vec3(0.0f);
+	Vec3 difuse = Vec3(0.0f);
+	Vec3 materialColor = intersecInfo->o->getMaterial()->getColor();
+
+	//loop para todas as luzes
+	for (int i = 0; i < scene.getNumberLights(); i++) {
+		Vec3 lightDirection = (intersecInfo->p - scene.getLight(i)->getPosition()).normalize();
+		Vec3 lightColor = intersecInfo->o->getMaterial()->getColor();
+
+		Ray shadowRay = Ray(scene.getLight(i)->getPosition(), lightDirection);
+		ObjectIntersection* shadowIntersec = castRay(shadowRay, scene);
+		
+		bool directLight = shadowIntersec->o == intersecInfo->o;
+
+		if (directLight)
+			difuse = difuse + (materialColor / PI * lightColor * facingRatio(intersecInfo->n, lightDirection));
+	}
+
+	color = difuse * intersecInfo->o->getMaterial()->getKd();
+	return new Vec3(color);
+}
+
 void render(Image& image, Scene& scene, Camera& camera) {
 	for (int y = 0; y < image.getHeight(); y++) {
 		for (int x = 0; x < image.getWidth(); x++) {
 			Ray ray = camera.getRay(x, y, image.getWidth(), image.getHeight());
 			ObjectIntersection* intersecInfo = castRay(ray, scene);
-			Vec3* pixelColor = shade(ray, intersecInfo);
+			Vec3* pixelColor = shade(ray, intersecInfo, scene);
 			image.SetPixel(x, y, pixelColor);
 		}
 	}
@@ -60,16 +78,17 @@ int main() {
 	//inicializando a imagem
 	Image image = Image(imageWidth, imageHeight);
 	//inicializando objetos e cenas
-	Sphere sphere1Geometry = Sphere(Vec3(10.0f, 10.0f, 30.0f), 10.0f);
-	Material sphere1Material = Material(1.0f, 1.0f, 1.0f, 1.0f, Vec3(1.0f));
+	Sphere sphere1Geometry = Sphere(Vec3(5.0f, 10.0f, 35.0f), 10.0f);
+	Material sphere1Material = Material(1.0f, 1.0f, 1.0f, 1.0f, Vec3(1.0f, 1.0f, 1.0f));
 	Object sphere1 = Object(&sphere1Geometry, &sphere1Material);
-	Sphere sphere2Geometry = Sphere(Vec3(-10.0f, -10.0f, 40.0f), 10.0f);
-	Object sphere2 = Object(&sphere2Geometry, &sphere1Material);
+	Sphere sphere2Geometry = Sphere(Vec3(-5.0f, -10.0f, 35.0f), 10.0f);
+	Material sphere2Material = Material(1.0f, 1.0f, 1.0f, 1.0f, Vec3(1.0f, 1.0f, 1.0f));
+	Object sphere2 = Object(&sphere2Geometry, &sphere2Material);
 	Scene scene;
 	scene.addObject(&sphere1);
 	scene.addObject(&sphere2);
 	//luzes
-	Light light = Light(Vec3(50.0f), Vec3(1.0f), 5.0f);
+	Light light = Light(Vec3(0.0f, 100.0f, 35.0f), Vec3(1.0f), 5.0f);
 	scene.addLight(&light);
 	//camera
 	Camera camera = Camera(Vec3(0.0f), Vec3(0.0f, 0.0f, 1.0f),
