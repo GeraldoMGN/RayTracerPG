@@ -49,13 +49,14 @@ Vec3* shade(Ray& ray, ObjectIntersection* intersecInfo, Scene& scene) {
 		Vec3 lightDirection = (intersecInfo->p - scene.getLight(i)->getPosition()).normalize();
 		Vec3 lightColor = intersecInfo->o->getMaterial()->getColor();
 
-		Ray shadowRay = Ray(scene.getLight(i)->getPosition(), lightDirection);
+		Ray shadowRay = Ray(intersecInfo->p, Vec3(0.0f) - lightDirection);
 		ObjectIntersection* shadowIntersec = castRay(shadowRay, scene);
 		
-		bool directLight = shadowIntersec->o == intersecInfo->o;
+		bool directLight = (shadowIntersec == NULL || shadowIntersec->t >= (intersecInfo->p - scene.getLight(i)->getPosition()).length());
 
-		if (directLight)
+		if (directLight) {
 			difuse = difuse + (materialColor / PI * lightColor * facingRatio(intersecInfo->n, lightDirection));
+		}
 	}
 
 	color = difuse * intersecInfo->o->getMaterial()->getKd();
