@@ -3,6 +3,7 @@
 #include "Scene.h"
 #include "Geometry.h"
 #include "ObjectIntersection.h"
+#include "Consts.h"
 
 #include <float.h>
 #include <algorithm>
@@ -47,7 +48,6 @@ Vec3* shade(Ray& ray, ObjectIntersection* intersecInfo, Scene& scene) {
 	//loop para todas as luzes
 	for (int i = 0; i < scene.getNumberLights(); i++) {
 		Vec3 lightDirection = (intersecInfo->p - scene.getLight(i)->getPosition()).normalize();
-		Vec3 lightColor = intersecInfo->o->getMaterial()->getColor();
 
 		Ray shadowRay = Ray(intersecInfo->p, Vec3(0.0f) - lightDirection);
 		ObjectIntersection* shadowIntersec = castRay(shadowRay, scene);
@@ -55,7 +55,8 @@ Vec3* shade(Ray& ray, ObjectIntersection* intersecInfo, Scene& scene) {
 		bool directLight = (shadowIntersec == NULL || shadowIntersec->t >= (intersecInfo->p - scene.getLight(i)->getPosition()).length());
 
 		if (directLight) {
-			difuse = difuse + (materialColor / PI * lightColor * facingRatio(intersecInfo->n, lightDirection));
+			difuse = difuse + (materialColor * scene.getLight(i)->intensityAtP(intersecInfo->p) * facingRatio(intersecInfo->n, lightDirection));
+			//std::cout << scene.getLight(i)->intensityAtP(intersecInfo->p).getX() << std::endl;
 		}
 	}
 
@@ -89,7 +90,7 @@ int main() {
 	scene.addObject(&sphere1);
 	scene.addObject(&sphere2);
 	//luzes
-	Light light = Light(Vec3(0.0f, 100.0f, 35.0f), Vec3(1.0f), 5.0f);
+	Light light = Light(Vec3(-10.0f, 45.0f, 35.0f), Vec3(1.0f), 20000.0f);
 	scene.addLight(&light);
 	//camera
 	Camera camera = Camera(Vec3(0.0f), Vec3(0.0f, 0.0f, 1.0f),

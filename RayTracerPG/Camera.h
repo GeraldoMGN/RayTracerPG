@@ -2,11 +2,9 @@
 
 #include "Vec3.h"
 #include "Ray.h"
+#include "Consts.h"
 
 #include <cmath>
-
-//consts
-double const PI = 3.14159265359;
 
 class Camera {
 private:
