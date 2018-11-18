@@ -80,21 +80,21 @@ int main() {
 	//inicializando a imagem
 	Image image = Image(imageWidth, imageHeight);
 	//inicializando objetos e cenas
-	Sphere sphere1Geometry = Sphere(Vec3(5.0f, 10.0f, 35.0f), 10.0f);
+	Sphere sphere1Geometry = Sphere(Vec3(7.0f, 10.0f, 30.0f), 10.0f);
 	Material sphere1Material = Material(1.0f, 1.0f, 1.0f, 1.0f, Vec3(1.0f, 1.0f, 1.0f));
 	Object sphere1 = Object(&sphere1Geometry, &sphere1Material);
-	Sphere sphere2Geometry = Sphere(Vec3(-5.0f, -10.0f, 35.0f), 10.0f);
+	Sphere sphere2Geometry = Sphere(Vec3(-7.0f, -10.0f, 30.0f), 10.0f);
 	Material sphere2Material = Material(1.0f, 1.0f, 1.0f, 1.0f, Vec3(1.0f, 1.0f, 1.0f));
 	Object sphere2 = Object(&sphere2Geometry, &sphere2Material);
 	Scene scene;
 	scene.addObject(&sphere1);
 	scene.addObject(&sphere2);
 	//luzes
-	Light light = Light(Vec3(-10.0f, 45.0f, 35.0f), Vec3(1.0f), 20000.0f);
+	Light light = Light(Vec3(0.0f, 45.0f, 20.0f), Vec3(1.0f), 20000.0f);
 	scene.addLight(&light);
 	//camera
-	Camera camera = Camera(Vec3(0.0f), Vec3(0.0f, 0.0f, 1.0f),
-		Vec3(0.0f, 1.0f, 0.0f), 90, 1.0f);
+	Camera camera = Camera(Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 35.0f),
+		Vec3(0.0f, 1.0f, 0.0f), 75, 1.0f);
 	camera.setCamToWorldMatrix();
 	render(image, scene, camera);
 

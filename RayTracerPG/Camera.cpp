@@ -25,7 +25,7 @@ void Camera::setCamToWorldMatrix()
 {
 	Vec3 forward((position - target).normalize());
 	Vec3 up = this->up.normalize();
-	Vec3 right(up.crossProduct(forward));
+	Vec3 right(forward.crossProduct(up));
 
 	camToworldMatrix[0][0] = right.getX();
 	camToworldMatrix[0][1] = right.getY();
