@@ -1,17 +1,13 @@
 #include "Camera.h"
 
-#include <iostream>
-
-
 Camera::Camera(Vec3 position, Vec3 target, Vec3 up, double fov, double f) : position(position), target(target), up(up), fov(fov), f(f) {}
 
 Ray Camera::getRay(double x, double y, int width, int height) const
 {
 	//TODO: implementar distancia do plano de imagem
 	double aspectRatio = (double)width / (double)height;
-	//std::cout << "Aspect Ratio: " << aspectRatio << std::endl;
-	double Px = (2 * ((x + 0.5) / (double)width) - 1) * tan(this->fov / 2 * PI / 180) * aspectRatio;
-	double Py = (1 - 2 * ((y + 0.5) / (double)height) * tan(this->fov / 2 * PI / 180));
+	double Px = (2 * ((x + 0.5) / (double)width) - 1) * tan(this->fov / 2 * PI / 180) * aspectRatio * f;
+	double Py = (1 - 2 * ((y + 0.5) / (double)height) * tan(this->fov / 2 * PI / 180)) * f;
 	
 	Vec3 origin = pointCamToWorld(Vec3(0.0f));
 	Vec3 direction(Px, Py, -1);
