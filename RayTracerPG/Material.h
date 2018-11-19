@@ -6,7 +6,7 @@ class Material {
 public:
 	Material(double Ke, double Kd, double Ks, double alpha, Vec3 c);
 
-	double geKe() const;
+	double getKe() const;
 	double getKd() const;
 	double getKs() const;
 	double getAlpha() const;

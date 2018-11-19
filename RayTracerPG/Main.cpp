@@ -43,11 +43,13 @@ Vec3* shade(Ray& ray, ObjectIntersection* intersecInfo, Scene& scene) {
 
 	Vec3 color = Vec3(0.0f);
 	Vec3 difuse = Vec3(0.0f);
+	Vec3 specular = Vec3(0.0f);
 	Vec3 materialColor = intersecInfo->o->getMaterial()->getColor();
 
 	//loop para todas as luzes
 	for (int i = 0; i < scene.getNumberLights(); i++) {
 		Vec3 lightDirection = (intersecInfo->p - scene.getLight(i)->getPosition()).normalize();
+		Vec3 lightIntensity = scene.getLight(i)->intensityAtP(intersecInfo->p);
 
 		Ray shadowRay = Ray(intersecInfo->p, Vec3(0.0f) - lightDirection);
 		ObjectIntersection* shadowIntersec = castRay(shadowRay, scene);
@@ -55,12 +57,16 @@ Vec3* shade(Ray& ray, ObjectIntersection* intersecInfo, Scene& scene) {
 		bool directLight = (shadowIntersec == NULL || shadowIntersec->t >= (intersecInfo->p - scene.getLight(i)->getPosition()).length());
 
 		if (directLight) {
-			difuse = difuse + (materialColor * scene.getLight(i)->intensityAtP(intersecInfo->p) * facingRatio(intersecInfo->n, lightDirection));
-			//std::cout << scene.getLight(i)->intensityAtP(intersecInfo->p).getX() << std::endl;
+			difuse = difuse + (materialColor * lightIntensity * facingRatio(intersecInfo->n, lightDirection));
+
+			Vec3 reflected = lightDirection.reflect(intersecInfo->n);
+			specular = specular + (lightIntensity * std::pow(facingRatio(reflected, lightDirection), intersecInfo->o->getMaterial()->getAlpha()));
 		}
 	}
 
-	color = difuse * intersecInfo->o->getMaterial()->getKd();
+	color = difuse * intersecInfo->o->getMaterial()->getKd() + 
+		(specular * intersecInfo->o->getMaterial()->getKs()) +
+		materialColor * intersecInfo->o->getMaterial()->getKe();
 	return new Vec3(color);
 }
 
@@ -81,20 +87,24 @@ int main() {
 	Image image = Image(imageWidth, imageHeight);
 	//inicializando objetos e cenas
 	Sphere sphere1Geometry = Sphere(Vec3(7.0f, 10.0f, 30.0f), 10.0f);
-	Material sphere1Material = Material(1.0f, 1.0f, 1.0f, 1.0f, Vec3(1.0f, 1.0f, 1.0f));
+	Material sphere1Material = Material(0.1f, 0.3f, 0.15f, 250.0f, Vec3(1.0f, 1.0f, 1.0f));
 	Object sphere1 = Object(&sphere1Geometry, &sphere1Material);
 	Sphere sphere2Geometry = Sphere(Vec3(-7.0f, -10.0f, 30.0f), 10.0f);
-	Material sphere2Material = Material(1.0f, 1.0f, 1.0f, 1.0f, Vec3(1.0f, 1.0f, 1.0f));
+	Material sphere2Material = Material(0.1f, 0.5f, 0.1f, 210.0f, Vec3(1.0f, 1.0f, 1.0f));
 	Object sphere2 = Object(&sphere2Geometry, &sphere2Material);
 	Scene scene;
 	scene.addObject(&sphere1);
 	scene.addObject(&sphere2);
 	//luzes
-	Light light = Light(Vec3(0.0f, 45.0f, 20.0f), Vec3(1.0f), 20000.0f);
+	Light light = Light(Vec3(0.0f, 30.0f, 20.0f), Vec3(1.0f, 0.0f, 0.0f), 20000.0f);
 	scene.addLight(&light);
+	Light light2 = Light(Vec3(-10.0f, 30.0f, 20.0f), Vec3(0.0f, 1.0f, 0.0f), 20000.0f);
+	scene.addLight(&light2);
+	Light light3 = Light(Vec3(10.0f, 30.0f, 20.0f), Vec3(0.0f, 0.0f, 1.0f), 20000.0f);
+	scene.addLight(&light3);
 	//camera
 	Camera camera = Camera(Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 35.0f),
-		Vec3(0.0f, 1.0f, 0.0f), 75, 1.0f);
+		Vec3(0.0f, 1.0f, 0.0f), 90, 1.0f);
 	camera.setCamToWorldMatrix();
 	render(image, scene, camera);
 

@@ -34,6 +34,12 @@ Vec3 Vec3::normalize() const
 	return Vec3(normalizedX, normalizedY, normalizedZ);
 }
 
+Vec3 Vec3::reflect(const Vec3& axis) const
+{
+	Vec3 rtn = *this - (axis * this->dotProduct(axis) * 2);
+	return rtn;
+}
+
 Vec3 Vec3::operator+(const Vec3 rhs) const {
 	return Vec3(x + rhs.x, y + rhs.y, z + rhs.z);
 }
