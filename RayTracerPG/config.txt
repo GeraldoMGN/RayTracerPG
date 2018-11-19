@@ -1,0 +1,14 @@
+#comentário
+
+#resolução
+res 1920 1080
+
+#câmera
+camera px py pz tx ty tz ux uy uz fov f
+
+#materiais
+material name r g b kd ks ke alpha
+
+#objetos
+sphere cx cy cz r materialName
+mesh file.obj materialName

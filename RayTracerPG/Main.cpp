@@ -4,14 +4,11 @@
 #include "Geometry.h"
 #include "ObjectIntersection.h"
 #include "Consts.h"
+#include "Config.h"
 
 #include <float.h>
 #include <algorithm>
 #include <iostream>
-
-//ISSO DEVERIA SER LIDO DE UM ARQUIVO
-int imageWidth = 1920;
-int imageHeight = 1080;
 
 //Quando os vetores estão normalizados, retorna 1 se tiver paralelo a 0 caso esteja perpendicular.
 double facingRatio(Vec3 vector1, Vec3 vector2) {
@@ -70,24 +67,25 @@ Vec3* shade(Ray& ray, ObjectIntersection* intersecInfo, Scene& scene) {
 	return new Vec3(color);
 }
 
-void render(Image& image, Scene& scene, Camera& camera) {
-	for (int y = 0; y < image.getHeight(); y++) {
-		for (int x = 0; x < image.getWidth(); x++) {
-			Ray ray = camera.getRay(x, y, image.getWidth(), image.getHeight());
+void render(Image* image, Scene& scene, Camera& camera) {
+	for (int y = 0; y < image->getHeight(); y++) {
+		for (int x = 0; x < image->getWidth(); x++) {
+			Ray ray = camera.getRay(x, y, image->getWidth(), image->getHeight());
 			ObjectIntersection* intersecInfo = castRay(ray, scene);
 			Vec3* pixelColor = shade(ray, intersecInfo, scene);
-			image.SetPixel(x, y, pixelColor);
+			image->SetPixel(x, y, pixelColor);
 		}
 	}
-	image.SaveAsPPM();
+	image->SaveAsPPM();
 }
 
 int main() {
-	//inicializando a imagem
-	Image image = Image(imageWidth, imageHeight);
+	Image* image = new Image(0, 0);
+	Config::readConfigFile(image);
+
 	//inicializando objetos e cenas
 	Sphere sphere1Geometry = Sphere(Vec3(7.0f, 10.0f, 30.0f), 10.0f);
-	Material sphere1Material = Material(0.1f, 0.3f, 0.15f, 250.0f, Vec3(1.0f, 1.0f, 1.0f));
+	Material sphere1Material = Material(0.1f, 0.3f, 0.2f, 50.0f, Vec3(1.0f, 1.0f, 1.0f));
 	Object sphere1 = Object(&sphere1Geometry, &sphere1Material);
 	Sphere sphere2Geometry = Sphere(Vec3(-7.0f, -10.0f, 30.0f), 10.0f);
 	Material sphere2Material = Material(0.1f, 0.5f, 0.1f, 210.0f, Vec3(1.0f, 1.0f, 1.0f));
@@ -104,7 +102,7 @@ int main() {
 	scene.addLight(&light3);
 	//camera
 	Camera camera = Camera(Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 35.0f),
-		Vec3(0.0f, 1.0f, 0.0f), 90, 1.0f);
+		Vec3(0.0f, 1.0f, 0.0f), 70, 1.5f);
 	camera.setCamToWorldMatrix();
 	render(image, scene, camera);
 

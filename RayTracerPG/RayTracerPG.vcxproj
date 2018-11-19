@@ -116,6 +116,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Config.h" />
     <ClInclude Include="Consts.h" />
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="Image.h" />
@@ -129,6 +130,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Config.cpp" />
     <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="Light.cpp" />
@@ -138,6 +140,9 @@
     <ClCompile Include="Ray.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Vec3.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="config.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
