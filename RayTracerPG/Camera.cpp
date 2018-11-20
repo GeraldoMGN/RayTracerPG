@@ -6,8 +6,8 @@ Ray Camera::getRay(double x, double y, int width, int height) const
 {
 	//TODO: implementar distancia do plano de imagem
 	double aspectRatio = (double)width / (double)height;
-	double Px = (2 * ((x + 0.5) / (double)width) - 1) * tan(this->fov / 2 * PI / 180) * aspectRatio * f;
-	double Py = (1 - 2 * ((y + 0.5) / (double)height) * tan(this->fov / 2 * PI / 180)) * f;
+	double Px = (2 * (x + 0.5) / (double)width - 1) * tan(this->fov / 2 * PI / 180) * aspectRatio * f;
+	double Py = (1 - 2 * (y + 0.5) / (double)height) * tan(this->fov / 2 * PI / 180) * f;
 	
 	Vec3 origin = pointCamToWorld(Vec3(0.0f));
 	Vec3 direction(Px, Py, -1);
@@ -19,7 +19,7 @@ Ray Camera::getRay(double x, double y, int width, int height) const
 
 void Camera::setCamToWorldMatrix()
 {
-	Vec3 forward((position - target).normalize());
+	Vec3 forward = (position - target).normalize();
 	Vec3 up = this->up.normalize();
 	Vec3 right(forward.crossProduct(up));
 
