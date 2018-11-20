@@ -1,10 +1,12 @@
 #comentário
 
 #resolução
+#res width height
 res 1920 1080
 
 #câmera
-camera px py pz tx ty tz ux uy uz fov f
+#camera px py pz tx ty tz ux uy uz fov f
+camera 0 0 0 0 0 35 0 1 0 75 1.0
 
 #materiais
 material name r g b kd ks ke alpha

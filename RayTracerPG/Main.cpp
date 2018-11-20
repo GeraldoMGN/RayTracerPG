@@ -67,10 +67,10 @@ Vec3* shade(Ray& ray, ObjectIntersection* intersecInfo, Scene& scene) {
 	return new Vec3(color);
 }
 
-void render(Image* image, Scene& scene, Camera& camera) {
+void render(Image* image, Scene& scene, Camera* camera) {
 	for (int y = 0; y < image->getHeight(); y++) {
 		for (int x = 0; x < image->getWidth(); x++) {
-			Ray ray = camera.getRay(x, y, image->getWidth(), image->getHeight());
+			Ray ray = camera->getRay(x, y, image->getWidth(), image->getHeight());
 			ObjectIntersection* intersecInfo = castRay(ray, scene);
 			Vec3* pixelColor = shade(ray, intersecInfo, scene);
 			image->SetPixel(x, y, pixelColor);
@@ -81,13 +81,16 @@ void render(Image* image, Scene& scene, Camera& camera) {
 
 int main() {
 	Image* image = new Image(0, 0);
-	Config::readConfigFile(image);
+	Camera* camera = new Camera(Vec3(0.0f), Vec3(0.0f), Vec3(0.0f), 0, 0.0f);
+	
+	Config::readConfigFile(image, camera);
+	camera->setCamToWorldMatrix();
 
 	//inicializando objetos e cenas
-	Sphere sphere1Geometry = Sphere(Vec3(7.0f, 10.0f, 30.0f), 10.0f);
+	Sphere sphere1Geometry = Sphere(Vec3(7.0f, 10.0f, 35.0f), 10.0f);
 	Material sphere1Material = Material(0.1f, 0.3f, 0.2f, 50.0f, Vec3(1.0f, 1.0f, 1.0f));
 	Object sphere1 = Object(&sphere1Geometry, &sphere1Material);
-	Sphere sphere2Geometry = Sphere(Vec3(-7.0f, -10.0f, 30.0f), 10.0f);
+	Sphere sphere2Geometry = Sphere(Vec3(-7.0f, -10.0f, 35.0f), 10.0f);
 	Material sphere2Material = Material(0.1f, 0.5f, 0.1f, 210.0f, Vec3(1.0f, 1.0f, 1.0f));
 	Object sphere2 = Object(&sphere2Geometry, &sphere2Material);
 	Scene scene;
@@ -101,9 +104,6 @@ int main() {
 	Light light3 = Light(Vec3(10.0f, 30.0f, 20.0f), Vec3(0.0f, 0.0f, 1.0f), 20000.0f);
 	scene.addLight(&light3);
 	//camera
-	Camera camera = Camera(Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 35.0f),
-		Vec3(0.0f, 1.0f, 0.0f), 70, 1.5f);
-	camera.setCamToWorldMatrix();
 	render(image, scene, camera);
 
 	return 0;
