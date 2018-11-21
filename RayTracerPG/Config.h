@@ -15,6 +15,8 @@ public:
 	static void createSphere(double cx, double cy, double cz,
 		double r, std::string materialName);
 	static void createMesh(std::string fileName, std::string materialName);
-	static void createLight(double px, double py, double pz
-		, double r, double g, double b, double intensity);
+	static void createLight(double px, double py, double pz, 
+		double r, double g, double b, double intensity);
+	static int readInt (std::istringstream& line);
+	static double readDouble (std::istringstream& line);
 };
