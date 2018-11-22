@@ -15,6 +15,10 @@ material material1 0 0 0 0.3 0.2 0.1 50
 
 #objetos
 #sphere cx cy cz r materialName
+#mesh file.obj materialName
 sphere 7 10 35 10 material1
 sphere -7 -10 35 10 material1
-mesh file.obj materialName
+
+#luzes (pontual)
+#light px py pz r g b intensity
+light 10 30 20 1 1 1 20000

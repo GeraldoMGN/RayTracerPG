@@ -21,14 +21,17 @@ void Config::readConfigFile(Image* image, Camera* camera, Scene* scene, Material
 		if (key == "res") {						//resoluçao
 			setRes(is_line, image);
 		}
-		if (key == "camera") {					//camera
+		else if (key == "camera") {					//camera
 			setCamera(is_line, camera);
 		}
-		if (key == "material") {					//camera
+		else if (key == "material") {					//camera
 			createMaterial(is_line, materialList);
 		}
-		if (key == "sphere") {					//camera
+		else if (key == "sphere") {					//camera
 			createSphere(is_line, scene, materialList);
+		}
+		else if (key == "light") {					//camera
+			createLight(is_line, scene);
 		}
 	}
 }
@@ -93,10 +96,36 @@ void Config::createSphere(std::istringstream& line, Scene* scene, MaterialList* 
 	double r				 = readDouble(line);
 	std::string materialName = readString(line);
 
+
 	Material* material = materialList->getMaterial(materialName);
+	if (material == NULL) {
+		std::cout << "Material não encontrado, esfera não criada" << std::endl << std::endl;
+		return;
+	}
 	Sphere* sphereGeometry = new Sphere(Vec3(cx, cy, cz), r);
 	Object* sphere = new Object(sphereGeometry, material);
+
+	std::cout << "Criando uma esfera em: X = " << cx << " Y = " << cy << " Z = " << cz << std::endl <<
+		"com raio = " << r << ", usando o material: " << material->getName() << std::endl << std::endl;
+
 	scene->addObject(sphere);
+}
+
+void Config::createLight(std::istringstream& line, Scene* scene)
+{
+	double px = readDouble(line);
+	double py = readDouble(line);
+	double pz = readDouble(line);
+	double r = readDouble(line);
+	double g = readDouble(line);
+	double b = readDouble(line);
+	double intensity = readDouble(line);
+
+	std::cout << "Criando uma luz pontual em: X = " << px << " Y = " << pz << " Z = " << pz << std::endl <<
+		" de cor: R = " << r << " G = " << g << " B = " << b << " e intensidade = " << intensity << std::endl << std::endl;
+
+	Light* light = new Light(Vec3(px, py, pz), Vec3(r, g, b), intensity);
+	scene->addLight(light);
 }
 
 int Config::readInt(std::istringstream& line)

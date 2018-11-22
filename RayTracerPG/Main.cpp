@@ -89,14 +89,6 @@ int main() {
 	Config::readConfigFile(image, camera, scene, materialList);
 	camera->setCamToWorldMatrix();
 
-	//luzes
-	Light light = Light(Vec3(0.0f, 30.0f, 20.0f), Vec3(1.0f, 0.0f, 0.0f), 20000.0f);
-	scene->addLight(&light);
-	Light light2 = Light(Vec3(-10.0f, 30.0f, 20.0f), Vec3(0.0f, 1.0f, 0.0f), 20000.0f);
-	scene->addLight(&light2);
-	Light light3 = Light(Vec3(10.0f, 30.0f, 20.0f), Vec3(0.0f, 0.0f, 1.0f), 20000.0f);
-	scene->addLight(&light3);
-	//camera
 	render(image, scene, camera);
 	std::cout << "Aperte enter para sair:";
 	std::cin.get();

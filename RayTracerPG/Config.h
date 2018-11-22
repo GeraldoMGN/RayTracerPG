@@ -16,8 +16,7 @@ public:
 	static void createMaterial (std::istringstream& line, MaterialList* materialList);
 	static void createSphere (std::istringstream& line, Scene* scene, MaterialList* materialList);
 	static void createMesh (std::string fileName, std::string materialName);
-	static void createLight (double px, double py, double pz, 
-		double r, double g, double b, double intensity);
+	static void createLight (std::istringstream& line, Scene* scene);
 	
 	static int readInt (std::istringstream& line);
 	static double readDouble (std::istringstream& line);
