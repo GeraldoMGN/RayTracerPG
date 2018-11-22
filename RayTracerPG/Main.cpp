@@ -6,6 +6,7 @@
 #include "Consts.h"
 #include "Config.h"
 #include "MaterialList.h"
+#include "Include/tiny_obj_loader.h"
 
 #include <float.h>
 #include <algorithm>

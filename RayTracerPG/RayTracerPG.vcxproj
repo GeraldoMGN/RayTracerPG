@@ -120,6 +120,7 @@
     <ClInclude Include="Consts.h" />
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="Image.h" />
+    <ClInclude Include="Include\tiny_obj_loader.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="MaterialList.h" />

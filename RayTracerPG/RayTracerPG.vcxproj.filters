@@ -54,6 +54,9 @@
     <ClInclude Include="MaterialList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Include\tiny_obj_loader.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Image.cpp">
