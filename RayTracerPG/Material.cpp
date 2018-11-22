@@ -1,7 +1,7 @@
 #include "Material.h"
 
-Material::Material(double Ke, double Kd, double Ks, double alpha, Vec3 c)
-	:Ke(Ke), Kd(Kd), Ks(Ks), alpha(alpha), c(c)
+Material::Material(std::string name, double Ke, double Kd, double Ks, double alpha, Vec3 c)
+	:name(name), Ke(Ke), Kd(Kd), Ks(Ks), alpha(alpha), c(c)
 {}
 
 double Material::getKe() const
@@ -27,4 +27,9 @@ double Material::getAlpha() const
 Vec3 Material::getColor() const
 {
 	return this->c;
+}
+
+std::string Material::getName() const
+{
+	return this->name;
 }

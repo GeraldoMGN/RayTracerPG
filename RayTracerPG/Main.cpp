@@ -5,6 +5,7 @@
 #include "ObjectIntersection.h"
 #include "Consts.h"
 #include "Config.h"
+#include "MaterialList.h"
 
 #include <float.h>
 #include <algorithm>
@@ -16,13 +17,13 @@ double facingRatio(Vec3 vector1, Vec3 vector2) {
 }
 
 //Pega o ObjectIntersection com as informações da interseção mais proxima
-ObjectIntersection* castRay(Ray& ray, Scene& scene) {
+ObjectIntersection* castRay(Ray& ray, Scene* scene) {
 	ObjectIntersection* intersecInfo = new ObjectIntersection{DBL_MAX, Vec3(0.0f), Vec3(0.0f), NULL};
 	
 	//compara com cada objeto da cena para ver se há ponto de interseção mais próximo que o anterior
-	for (int k = 0; k < scene.getNumberObjects(); k++) {
+	for (int k = 0; k < scene->getNumberObjects(); k++) {
 		ObjectIntersection* tempInfo = new ObjectIntersection{0.0f, Vec3(0.0f), Vec3(0.0f), NULL};
-		if (scene.getObject(k)->intersect(ray, tempInfo)) {
+		if (scene->getObject(k)->intersect(ray, tempInfo)) {
 			if (tempInfo->t < intersecInfo->t) {
 				intersecInfo = tempInfo;
 			}
@@ -34,7 +35,7 @@ ObjectIntersection* castRay(Ray& ray, Scene& scene) {
 }
 
 //calcula a cor do pixel
-Vec3* shade(Ray& ray, ObjectIntersection* intersecInfo, Scene& scene) {
+Vec3* shade(Ray& ray, ObjectIntersection* intersecInfo, Scene* scene) {
 	if (intersecInfo == NULL)
 		return new Vec3(0.5f);
 
@@ -44,14 +45,14 @@ Vec3* shade(Ray& ray, ObjectIntersection* intersecInfo, Scene& scene) {
 	Vec3 materialColor = intersecInfo->o->getMaterial()->getColor();
 
 	//loop para todas as luzes
-	for (int i = 0; i < scene.getNumberLights(); i++) {
-		Vec3 lightDirection = (intersecInfo->p - scene.getLight(i)->getPosition()).normalize();
-		Vec3 lightIntensity = scene.getLight(i)->intensityAtP(intersecInfo->p);
+	for (int i = 0; i < scene->getNumberLights(); i++) {
+		Vec3 lightDirection = (intersecInfo->p - scene->getLight(i)->getPosition()).normalize();
+		Vec3 lightIntensity = scene->getLight(i)->intensityAtP(intersecInfo->p);
 
 		Ray shadowRay = Ray(intersecInfo->p, Vec3(0.0f) - lightDirection);
 		ObjectIntersection* shadowIntersec = castRay(shadowRay, scene);
 		
-		bool directLight = (shadowIntersec == NULL || shadowIntersec->t >= (intersecInfo->p - scene.getLight(i)->getPosition()).length());
+		bool directLight = (shadowIntersec == NULL || shadowIntersec->t >= (intersecInfo->p - scene->getLight(i)->getPosition()).length());
 
 		if (directLight) {
 			difuse = difuse + (materialColor * lightIntensity * facingRatio(intersecInfo->n, lightDirection));
@@ -67,7 +68,7 @@ Vec3* shade(Ray& ray, ObjectIntersection* intersecInfo, Scene& scene) {
 	return new Vec3(color);
 }
 
-void render(Image* image, Scene& scene, Camera* camera) {
+void render(Image* image, Scene* scene, Camera* camera) {
 	for (int y = 0; y < image->getHeight(); y++) {
 		for (int x = 0; x < image->getWidth(); x++) {
 			Ray ray = camera->getRay(x, y, image->getWidth(), image->getHeight());
@@ -81,30 +82,24 @@ void render(Image* image, Scene& scene, Camera* camera) {
 
 int main() {
 	Image* image = new Image(0, 0);
-	Camera* camera = new Camera(Vec3(0.0f), Vec3(0.0f), Vec3(0.0f), 0, 0.0f);
-	
-	Config::readConfigFile(image, camera);
+	Camera* camera = new Camera(Vec3(0),Vec3(0), Vec3(0), 0, 0);
+	MaterialList* materialList = new MaterialList();
+	Scene* scene = new Scene();
+
+	Config::readConfigFile(image, camera, scene, materialList);
 	camera->setCamToWorldMatrix();
 
-	//inicializando objetos e cenas
-	Sphere sphere1Geometry = Sphere(Vec3(7.0f, 10.0f, 35.0f), 10.0f);
-	Material sphere1Material = Material(0.1f, 0.3f, 0.2f, 50.0f, Vec3(1.0f, 1.0f, 1.0f));
-	Object sphere1 = Object(&sphere1Geometry, &sphere1Material);
-	Sphere sphere2Geometry = Sphere(Vec3(-7.0f, -10.0f, 35.0f), 10.0f);
-	Material sphere2Material = Material(0.1f, 0.5f, 0.1f, 210.0f, Vec3(1.0f, 1.0f, 1.0f));
-	Object sphere2 = Object(&sphere2Geometry, &sphere2Material);
-	Scene scene;
-	scene.addObject(&sphere1);
-	scene.addObject(&sphere2);
 	//luzes
 	Light light = Light(Vec3(0.0f, 30.0f, 20.0f), Vec3(1.0f, 0.0f, 0.0f), 20000.0f);
-	scene.addLight(&light);
+	scene->addLight(&light);
 	Light light2 = Light(Vec3(-10.0f, 30.0f, 20.0f), Vec3(0.0f, 1.0f, 0.0f), 20000.0f);
-	scene.addLight(&light2);
+	scene->addLight(&light2);
 	Light light3 = Light(Vec3(10.0f, 30.0f, 20.0f), Vec3(0.0f, 0.0f, 1.0f), 20000.0f);
-	scene.addLight(&light3);
+	scene->addLight(&light3);
 	//camera
 	render(image, scene, camera);
+	std::cout << "Aperte enter para sair:";
+	std::cin.get();
 
 	return 0;
 }
