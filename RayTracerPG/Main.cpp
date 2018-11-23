@@ -50,7 +50,9 @@ Vec3* shade(Ray& ray, ObjectIntersection* intersecInfo, Scene* scene) {
 		Vec3 lightDirection = (intersecInfo->p - scene->getLight(i)->getPosition()).normalize();
 		Vec3 lightIntensity = scene->getLight(i)->intensityAtP(intersecInfo->p);
 
-		Ray shadowRay = Ray(intersecInfo->p, Vec3(0.0f) - lightDirection);
+		
+		Vec3 hitPoint = intersecInfo->p + (Vec3(0.0f) - lightDirection);
+		Ray shadowRay = Ray(hitPoint, Vec3(0.0f) - lightDirection);
 		ObjectIntersection* shadowIntersec = castRay(shadowRay, scene);
 		
 		bool directLight = (shadowIntersec == NULL || shadowIntersec->t >= (intersecInfo->p - scene->getLight(i)->getPosition()).length());
@@ -89,6 +91,25 @@ int main() {
 
 	Config::readConfigFile(image, camera, scene, materialList);
 	camera->setCamToWorldMatrix();
+
+	std::vector<Vec3*> vertices;
+	vertices.push_back(new Vec3(0, 5, 20));
+	vertices.push_back(new Vec3(-5, -5, 20));
+	vertices.push_back(new Vec3(5, -5, 20));
+	vertices.push_back(new Vec3(-10, 5, 22));
+	std::vector<long*> vertexIndexes;
+	vertexIndexes.push_back(new long(0));
+	vertexIndexes.push_back(new long(1));
+	vertexIndexes.push_back(new long(2));
+	std::vector<Vec3*> normals;
+	normals.push_back(new Vec3(0, 0, -1));
+	Vec3 temp = Vec3(0.5, 0.5, 0.5).normalize();
+	Vec3* poi = new Vec3(temp);
+	normals.push_back(poi);
+	Mesh* mesh = new Mesh(vertices, vertexIndexes, normals);
+	Material* material = materialList->getMaterial("material2");
+	Object* object = new Object(mesh, material);
+	scene->addObject(object);
 
 	render(image, scene, camera);
 	std::cout << "Aperte enter para sair:";
