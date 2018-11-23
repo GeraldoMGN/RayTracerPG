@@ -75,7 +75,7 @@ bool Mesh::intersectTriangle(const Ray& ray, const Vec3* vertex0, const Vec3* ve
 	
 	Vec3 tvec = ray.getOrigin() - *vertex0;
 	double u = tvec.dotProduct(pvec) / determinant;
-	if (u < 0.0 || u > u > 1.0)
+	if (u < 0.0 || u > 1.0)
 		return false;
 
 	Vec3 qvec = tvec.crossProduct(edge0);

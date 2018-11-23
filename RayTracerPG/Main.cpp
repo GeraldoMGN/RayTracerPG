@@ -49,9 +49,8 @@ Vec3* shade(Ray& ray, ObjectIntersection* intersecInfo, Scene* scene) {
 	for (int i = 0; i < scene->getNumberLights(); i++) {
 		Vec3 lightDirection = (intersecInfo->p - scene->getLight(i)->getPosition()).normalize();
 		Vec3 lightIntensity = scene->getLight(i)->intensityAtP(intersecInfo->p);
-
 		
-		Vec3 hitPoint = intersecInfo->p + (Vec3(0.0f) - lightDirection);
+		Vec3 hitPoint = intersecInfo->p + (Vec3(0.0f) - lightDirection) * BIAS;
 		Ray shadowRay = Ray(hitPoint, Vec3(0.0f) - lightDirection);
 		ObjectIntersection* shadowIntersec = castRay(shadowRay, scene);
 		
