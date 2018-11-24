@@ -15,7 +15,7 @@ public:
 	static void setCamera (std::istringstream& line, Camera* camera);
 	static void createMaterial (std::istringstream& line, MaterialList* materialList);
 	static void createSphere (std::istringstream& line, Scene* scene, MaterialList* materialList);
-	static void createMesh (std::string fileName, std::string materialName);
+	static void createMesh (std::istringstream& line, Scene* scene, MaterialList* materialList);
 	static void createLight (std::istringstream& line, Scene* scene);
 	
 	static int readInt (std::istringstream& line);

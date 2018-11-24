@@ -30,6 +30,9 @@ void Config::readConfigFile(Image* image, Camera* camera, Scene* scene, Material
 		else if (key == "sphere") {					//camera
 			createSphere(is_line, scene, materialList);
 		}
+		else if (key == "mesh") {					//camera
+			createMesh(is_line, scene, materialList);
+		}
 		else if (key == "light") {					//camera
 			createLight(is_line, scene);
 		}
@@ -109,6 +112,26 @@ void Config::createSphere(std::istringstream& line, Scene* scene, MaterialList* 
 		"com raio = " << r << ", usando o material: " << material->getName() << std::endl << std::endl;
 
 	scene->addObject(sphere);
+}
+
+void Config::createMesh(std::istringstream& line, Scene* scene, MaterialList* materialList)
+{
+	std::string fileName = readString(line);
+	std::string materialName = readString(line);
+
+	tinyobj::attrib_t attrib;
+	std::vector<tinyobj::shape_t> shapes;
+	std::vector<tinyobj::material_t> materials;
+	std::string err;
+	std::string path = "objs/" + fileName;
+	if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &err, path.c_str())) {
+		std::cout << err << std::endl;
+		throw std::runtime_error(err);
+	}
+	Mesh* mesh = new Mesh(attrib.vertices, shapes[0].mesh.indices, attrib.normals, shapes[0].mesh.num_face_vertices);
+	Material* material = materialList->getMaterial(materialName);
+	Object* object = new Object(mesh, material);
+	scene->addObject(object);
 }
 
 void Config::createLight(std::istringstream& line, Scene* scene)
