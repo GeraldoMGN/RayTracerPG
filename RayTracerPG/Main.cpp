@@ -83,6 +83,8 @@ void render(Image* image, Scene* scene, Camera* camera) {
 			Vec3* pixelColor = shade(ray, intersecInfo, scene);
 			image->SetPixel(x, y, pixelColor);
 			delete[] intersecInfo;
+			if (x==0)
+				std::cout << "line " << y << std::endl;
 		}
 	}
 	image->SaveAsPPM();
@@ -101,14 +103,14 @@ int main() {
 	std::vector<tinyobj::shape_t> shapes;
 	std::vector<tinyobj::material_t> materials;
 	std::string warn, err;
-	if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &err, "objs/suzanne.obj")) {
+	if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &err, "objs/bunny.obj")) {
 		std::cout << err << std::endl;
 		throw std::runtime_error(warn + err);
 	}
 	Mesh* mesh = new Mesh(attrib.vertices, shapes[0].mesh.indices, attrib.normals, shapes[0].mesh.num_face_vertices);
 	Material* material = materialList->getMaterial("material2");
 	Object* object = new Object(mesh, material);
-	//scene->addObject(object);
+	scene->addObject(object);
 	/*
 	std::vector<Vec3*> vertices;
 	vertices.push_back(new Vec3(0, 5, 20));

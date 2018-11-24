@@ -61,12 +61,12 @@ bool Mesh::intersect(const Ray& ray, ObjectIntersection* info) const
 		int index2 = vertexIndexes.at(i * 3 + 2).vertex_index;
 		Vec3* vertex2 = new Vec3(vertices.at(index2 * 3), vertices.at(index2 * 3 + 1), vertices.at(index2 * 3 + 2));
 		
-		int normalIndex0 = vertexIndexes.at(i * 3 + 0).normal_index;
-		Vec3* normal0 = new Vec3(normals.at(normalIndex0 * 3), normals.at(normalIndex0 * 3 + 1), normals.at(normalIndex0 * 3 + 2));
-		int normalIndex1 = vertexIndexes.at(i * 3 + 1).normal_index;
-		Vec3* normal1 = new Vec3(normals.at(normalIndex1 * 3), normals.at(normalIndex1 * 3 + 1), normals.at(normalIndex1 * 3 + 2));
-		int normalIndex2 = vertexIndexes.at(i * 3 + 2).normal_index;
-		Vec3* normal2 = new Vec3(normals.at(normalIndex2 * 3), normals.at(normalIndex2 * 3 + 1), normals.at(normalIndex2 * 3 + 2));
+		//int normalIndex0 = vertexIndexes.at(i * 3 + 0).normal_index;
+		//Vec3* normal0 = new Vec3(normals.at(normalIndex0 * 3), normals.at(normalIndex0 * 3 + 1), normals.at(normalIndex0 * 3 + 2));
+		//int normalIndex1 = vertexIndexes.at(i * 3 + 1).normal_index;
+		//Vec3* normal1 = new Vec3(normals.at(normalIndex1 * 3), normals.at(normalIndex1 * 3 + 1), normals.at(normalIndex1 * 3 + 2));
+		//int normalIndex2 = vertexIndexes.at(i * 3 + 2).normal_index;
+		//Vec3* normal2 = new Vec3(normals.at(normalIndex2 * 3), normals.at(normalIndex2 * 3 + 1), normals.at(normalIndex2 * 3 + 2));
 
 		ObjectIntersection* tempInfo = new ObjectIntersection{ DBL_MAX, Vec3(0.0f), Vec3(0.0f), info->o};
 		double u, v;
@@ -74,14 +74,16 @@ bool Mesh::intersect(const Ray& ray, ObjectIntersection* info) const
 			intersec = true;
 		if (intersec && tempInfo->t < info->t) {
 			*info = *tempInfo;
-			info->n = (*normal0 * (1 - u - v)) + *normal1 * u + *normal2 * u;
+			//info->n = (*normal0 * (1 - u - v)) + *normal1 * u + *normal2 * u;
+			info->n = (*vertex1 - *vertex0).crossProduct(*vertex2 - *vertex0).normalize();
 		}
+		delete[] tempInfo;
 		delete[] vertex0;
 		delete[] vertex1;
 		delete[] vertex2;
-		delete[] normal0;
-		delete[] normal1;
-		delete[] normal2;
+		//delete[] normal0;
+		//delete[] normal1;
+		//delete[] normal2;
 	}
 	return intersec;
 }
