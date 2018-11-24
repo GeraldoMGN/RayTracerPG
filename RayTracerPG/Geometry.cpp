@@ -44,22 +44,50 @@ bool Sphere::intersect(const Ray& ray, ObjectIntersection* info) const
 	return true;
 }
 
-Mesh::Mesh(std::vector<Vec3*> vertices, std::vector<long*> vertexIndexes, std::vector<Vec3*> normals) : vertices(vertices), vertexIndexes(vertexIndexes), normals(normals)
+Mesh::Mesh(std::vector<double>& vertices, std::vector<tinyobj::index_t>& vertexIndexes, 
+	std::vector<double>& normals, std::vector<unsigned char>& faceVertex)
+	: vertices(vertices), vertexIndexes(vertexIndexes), normals(normals), faceVertex(faceVertex)
 {
 }
 
 bool Mesh::intersect(const Ray& ray, ObjectIntersection* info) const
 {
 	bool intersec = false;
-	for (int i = 0; i < vertexIndexes.size(); i++) {
-		intersec = intersectTriangle(ray, vertices.at(0), vertices.at(1), vertices.at(2), normals.at(0), info);
-		if (intersec) return intersec;
+	for (int i = 0; i < faceVertex.size(); i++) {
+		int index0 = vertexIndexes.at(i * 3).vertex_index;
+		Vec3* vertex0 = new Vec3(vertices.at(index0 * 3), vertices.at(index0 * 3 + 1), vertices.at(index0 * 3 + 2));
+		int index1 = vertexIndexes.at(i * 3 + 1).vertex_index;
+		Vec3* vertex1 = new Vec3(vertices.at(index1 * 3), vertices.at(index1 * 3 + 1), vertices.at(index1 * 3 + 2));
+		int index2 = vertexIndexes.at(i * 3 + 2).vertex_index;
+		Vec3* vertex2 = new Vec3(vertices.at(index2 * 3), vertices.at(index2 * 3 + 1), vertices.at(index2 * 3 + 2));
+		
+		int normalIndex0 = vertexIndexes.at(i * 3 + 0).normal_index;
+		Vec3* normal0 = new Vec3(normals.at(normalIndex0 * 3), normals.at(normalIndex0 * 3 + 1), normals.at(normalIndex0 * 3 + 2));
+		int normalIndex1 = vertexIndexes.at(i * 3 + 1).normal_index;
+		Vec3* normal1 = new Vec3(normals.at(normalIndex1 * 3), normals.at(normalIndex1 * 3 + 1), normals.at(normalIndex1 * 3 + 2));
+		int normalIndex2 = vertexIndexes.at(i * 3 + 2).normal_index;
+		Vec3* normal2 = new Vec3(normals.at(normalIndex2 * 3), normals.at(normalIndex2 * 3 + 1), normals.at(normalIndex2 * 3 + 2));
+
+		ObjectIntersection* tempInfo = new ObjectIntersection{ DBL_MAX, Vec3(0.0f), Vec3(0.0f), info->o};
+		double u, v;
+		if (intersectTriangle(ray, vertex0, vertex1, vertex2, tempInfo, u, v))
+			intersec = true;
+		if (intersec && tempInfo->t < info->t) {
+			*info = *tempInfo;
+			info->n = (*normal0 * (1 - u - v)) + *normal1 * u + *normal2 * u;
+		}
+		delete[] vertex0;
+		delete[] vertex1;
+		delete[] vertex2;
+		delete[] normal0;
+		delete[] normal1;
+		delete[] normal2;
 	}
-	//intersec = intersectTriangle(ray, vertices.at(0), vertices.at(3), vertices.at(1), normals.at(1), info);
 	return intersec;
 }
 
-bool Mesh::intersectTriangle(const Ray& ray, const Vec3* vertex0, const Vec3* vertex1, const Vec3* vertex2, const Vec3* normal, ObjectIntersection* info) const
+bool Mesh::intersectTriangle(const Ray& ray, const Vec3* vertex0, const Vec3* vertex1, const Vec3* vertex2, 
+	ObjectIntersection* info, double& u, double& v) const
 {
 	//baseado no algoritmo de interseção de Möller–Trumbore
 	//std::cout << vertex1->getX() << std::endl;
@@ -74,16 +102,15 @@ bool Mesh::intersectTriangle(const Ray& ray, const Vec3* vertex0, const Vec3* ve
 		return false;
 	
 	Vec3 tvec = ray.getOrigin() - *vertex0;
-	double u = tvec.dotProduct(pvec) / determinant;
+	u = tvec.dotProduct(pvec) / determinant;
 	if (u < 0.0 || u > 1.0)
 		return false;
 
 	Vec3 qvec = tvec.crossProduct(edge0);
-	double v = ray.getDirection().dotProduct(qvec) / determinant;
+	v = ray.getDirection().dotProduct(qvec) / determinant;
 	if (v < 0.0 || u + v > 1.0)
 		return false;
 
-	info->n = *normal;
 	info->t = edge1.dotProduct(qvec) / determinant;
 	if (info->t < 0)
 		return false;

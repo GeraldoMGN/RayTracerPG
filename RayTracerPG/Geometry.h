@@ -5,6 +5,9 @@
 #include "Ray.h"
 #include "cmath"
 
+#define TINYOBJLOADER_USE_DOUBLE
+#include "Include/tiny_obj_loader.h"
+
 #include <vector>
 
 class Geometry {
@@ -25,11 +28,16 @@ public:
 
 class Mesh : public Geometry {
 private:
-	std::vector<Vec3*> vertices;
-	std::vector<long*> vertexIndexes;
-	std::vector<Vec3*> normals;
+	std::vector<double> vertices;
+	std::vector<tinyobj::index_t> vertexIndexes;
+	std::vector<double> normals;
+	std::vector<unsigned char> faceVertex;
+
+
 public:
-	Mesh(std::vector<Vec3*> vertices, std::vector<long*> vertexIndexes, std::vector<Vec3*> faces);
+	Mesh(std::vector<double>& vertices, std::vector<tinyobj::index_t>& vertexIndexes, 
+		std::vector<double>& normals, std::vector<unsigned char>& faceVertex);
 	bool intersect(const Ray& r, ObjectIntersection* info = nullptr) const override;
-	bool intersectTriangle(const Ray& ray, const Vec3* vertex0, const Vec3* vertex1, const Vec3* vertex2, const Vec3* normal, ObjectIntersection* info) const;
+	bool intersectTriangle(const Ray& ray, const Vec3* vertex0, const Vec3* vertex1, const Vec3* vertex2, 
+		ObjectIntersection* info, double& u, double& v) const;
 };

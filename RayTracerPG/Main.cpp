@@ -6,6 +6,9 @@
 #include "Consts.h"
 #include "Config.h"
 #include "MaterialList.h"
+
+#define TINYOBJLOADER_USE_DOUBLE
+#define TINYOBJLOADER_IMPLEMENTATION
 #include "Include/tiny_obj_loader.h"
 
 #include <float.h>
@@ -23,9 +26,10 @@ ObjectIntersection* castRay(Ray& ray, Scene* scene) {
 	
 	//compara com cada objeto da cena para ver se há ponto de interseção mais próximo que o anterior
 	for (int k = 0; k < scene->getNumberObjects(); k++) {
-		ObjectIntersection* tempInfo = new ObjectIntersection{0.0f, Vec3(0.0f), Vec3(0.0f), NULL};
+		ObjectIntersection* tempInfo = new ObjectIntersection{ DBL_MAX, Vec3(0.0f), Vec3(0.0f), NULL};
 		if (scene->getObject(k)->intersect(ray, tempInfo)) {
 			if (tempInfo->t < intersecInfo->t) {
+				delete[] intersecInfo;
 				intersecInfo = tempInfo;
 			}
 		}
@@ -62,6 +66,7 @@ Vec3* shade(Ray& ray, ObjectIntersection* intersecInfo, Scene* scene) {
 			Vec3 reflected = lightDirection.reflect(intersecInfo->n);
 			specular = specular + (lightIntensity * std::pow(facingRatio(reflected, lightDirection), intersecInfo->o->getMaterial()->getAlpha()));
 		}
+		delete[] shadowIntersec;
 	}
 
 	color = difuse * intersecInfo->o->getMaterial()->getKd() + 
@@ -77,6 +82,7 @@ void render(Image* image, Scene* scene, Camera* camera) {
 			ObjectIntersection* intersecInfo = castRay(ray, scene);
 			Vec3* pixelColor = shade(ray, intersecInfo, scene);
 			image->SetPixel(x, y, pixelColor);
+			delete[] intersecInfo;
 		}
 	}
 	image->SaveAsPPM();
@@ -90,7 +96,20 @@ int main() {
 
 	Config::readConfigFile(image, camera, scene, materialList);
 	camera->setCamToWorldMatrix();
-
+	
+	tinyobj::attrib_t attrib;
+	std::vector<tinyobj::shape_t> shapes;
+	std::vector<tinyobj::material_t> materials;
+	std::string warn, err;
+	if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &err, "objs/suzanne.obj")) {
+		std::cout << err << std::endl;
+		throw std::runtime_error(warn + err);
+	}
+	Mesh* mesh = new Mesh(attrib.vertices, shapes[0].mesh.indices, attrib.normals, shapes[0].mesh.num_face_vertices);
+	Material* material = materialList->getMaterial("material2");
+	Object* object = new Object(mesh, material);
+	//scene->addObject(object);
+	/*
 	std::vector<Vec3*> vertices;
 	vertices.push_back(new Vec3(0, 5, 20));
 	vertices.push_back(new Vec3(-5, -5, 20));
@@ -100,16 +119,19 @@ int main() {
 	vertexIndexes.push_back(new long(0));
 	vertexIndexes.push_back(new long(1));
 	vertexIndexes.push_back(new long(2));
+	vertexIndexes.push_back(new long(0));
+	vertexIndexes.push_back(new long(3));
+	vertexIndexes.push_back(new long(1));
 	std::vector<Vec3*> normals;
 	normals.push_back(new Vec3(0, 0, -1));
-	Vec3 temp = Vec3(0.5, 0.5, 0.5).normalize();
+	Vec3 temp = Vec3(-0.5, -0.5, -0.5).normalize();
 	Vec3* poi = new Vec3(temp);
 	normals.push_back(poi);
 	Mesh* mesh = new Mesh(vertices, vertexIndexes, normals);
 	Material* material = materialList->getMaterial("material2");
 	Object* object = new Object(mesh, material);
 	scene->addObject(object);
-
+	*/
 	render(image, scene, camera);
 	std::cout << "Aperte enter para sair:";
 	std::cin.get();

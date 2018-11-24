@@ -6,19 +6,19 @@ res 1920 1080
 
 #câmera
 #camera px py pz tx ty tz ux uy uz fov f
-camera 0 0 0 0 0 10 0 1 0 75 1.0
+camera 1 1 -2 0 0 0 0 1 0 75 1.0
 
 #materiais
 #material name r g b kd ks ke alpha
 material material1 1 1 1 0.3 0.2 0.1 50
-material material2 1 1 1 0.2 0.2 0.0 250
+material material2 1 1 1 0.2 0.2 0.2 250
 
 #objetos
 #sphere cx cy cz r materialName
 #mesh file.obj materialName
 sphere 7 10 35 10 material1
-sphere -7 -10 35 10 material1
+#sphere -7 -10 35 10 material1
 
 #luzes (pontual)
 #light px py pz r g b intensity
-light -2 -5 0 1 1 1 20000
+light 5 20 0 1 1 1 20000
