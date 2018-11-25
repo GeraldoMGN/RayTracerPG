@@ -60,13 +60,6 @@ bool Mesh::intersect(const Ray& ray, ObjectIntersection* info) const
 		Vec3* vertex1 = new Vec3(vertices.at(index1 * 3), vertices.at(index1 * 3 + 1), vertices.at(index1 * 3 + 2));
 		int index2 = vertexIndexes.at(i * 3 + 2).vertex_index;
 		Vec3* vertex2 = new Vec3(vertices.at(index2 * 3), vertices.at(index2 * 3 + 1), vertices.at(index2 * 3 + 2));
-		
-		//int normalIndex0 = vertexIndexes.at(i * 3 + 0).normal_index;
-		//Vec3* normal0 = new Vec3(normals.at(normalIndex0 * 3), normals.at(normalIndex0 * 3 + 1), normals.at(normalIndex0 * 3 + 2));
-		//int normalIndex1 = vertexIndexes.at(i * 3 + 1).normal_index;
-		//Vec3* normal1 = new Vec3(normals.at(normalIndex1 * 3), normals.at(normalIndex1 * 3 + 1), normals.at(normalIndex1 * 3 + 2));
-		//int normalIndex2 = vertexIndexes.at(i * 3 + 2).normal_index;
-		//Vec3* normal2 = new Vec3(normals.at(normalIndex2 * 3), normals.at(normalIndex2 * 3 + 1), normals.at(normalIndex2 * 3 + 2));
 
 		ObjectIntersection* tempInfo = new ObjectIntersection{ DBL_MAX, Vec3(0.0f), Vec3(0.0f), info->o};
 		double u, v;
@@ -74,16 +67,12 @@ bool Mesh::intersect(const Ray& ray, ObjectIntersection* info) const
 			intersec = true;
 		if (intersec && tempInfo->t < info->t) {
 			*info = *tempInfo;
-			//info->n = (*normal0 * (1 - u - v)) + *normal1 * u + *normal2 * u;
-			info->n = (*vertex1 - *vertex0).crossProduct(*vertex2 - *vertex0).normalize();
+			info->n = interpolateNormal(i, u, v);
 		}
 		delete[] tempInfo;
 		delete[] vertex0;
 		delete[] vertex1;
 		delete[] vertex2;
-		//delete[] normal0;
-		//delete[] normal1;
-		//delete[] normal2;
 	}
 	return intersec;
 }
@@ -92,7 +81,7 @@ bool Mesh::intersectTriangle(const Ray& ray, const Vec3* vertex0, const Vec3* ve
 	ObjectIntersection* info, double& u, double& v) const
 {
 	//baseado no algoritmo de interseção de Möller–Trumbore
-	//std::cout << vertex1->getX() << std::endl;
+
 	//As duas arestas ligadas ao vertice 0
 	Vec3 edge0 = *vertex1 - *vertex0;
 	Vec3 edge1 = *vertex2 - *vertex0;
@@ -118,4 +107,22 @@ bool Mesh::intersectTriangle(const Ray& ray, const Vec3* vertex0, const Vec3* ve
 		return false;
 	info->p = ray.getOrigin() + (ray.getDirection() * info->t);
 	return true;
+}
+
+Vec3 Mesh::interpolateNormal(int& index, double & u, double & v) const
+{
+	int normalIndex0 = vertexIndexes.at(index * 3 + 0).normal_index;
+	Vec3* normal0 = new Vec3(normals.at(normalIndex0 * 3), normals.at(normalIndex0 * 3 + 1), normals.at(normalIndex0 * 3 + 2));
+	int normalIndex1 = vertexIndexes.at(index * 3 + 1).normal_index;
+	Vec3* normal1 = new Vec3(normals.at(normalIndex1 * 3), normals.at(normalIndex1 * 3 + 1), normals.at(normalIndex1 * 3 + 2));
+	int normalIndex2 = vertexIndexes.at(index * 3 + 2).normal_index;
+	Vec3* normal2 = new Vec3(normals.at(normalIndex2 * 3), normals.at(normalIndex2 * 3 + 1), normals.at(normalIndex2 * 3 + 2));
+
+	Vec3 normal = Vec3((*normal0 * (1 - u - v)) + *normal1 * u + *normal2 * v);
+
+	delete[] normal0;
+	delete[] normal1;
+	delete[] normal2;
+
+	return normal;
 }
