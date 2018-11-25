@@ -99,41 +99,7 @@ int main() {
 	Config::readConfigFile(image, camera, scene, materialList);
 	camera->setCamToWorldMatrix();
 	
-	tinyobj::attrib_t attrib;
-	std::vector<tinyobj::shape_t> shapes;
-	std::vector<tinyobj::material_t> materials;
-	std::string warn, err;
-	if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &err, "objs/bunny.obj")) {
-		std::cout << err << std::endl;
-		throw std::runtime_error(warn + err);
-	}
-	Mesh* mesh = new Mesh(attrib.vertices, shapes[0].mesh.indices, attrib.normals, shapes[0].mesh.num_face_vertices);
-	Material* material = materialList->getMaterial("material2");
-	Object* object = new Object(mesh, material);
-	scene->addObject(object);
-	/*
-	std::vector<Vec3*> vertices;
-	vertices.push_back(new Vec3(0, 5, 20));
-	vertices.push_back(new Vec3(-5, -5, 20));
-	vertices.push_back(new Vec3(5, -5, 20));
-	vertices.push_back(new Vec3(-10, 5, 22));
-	std::vector<long*> vertexIndexes;
-	vertexIndexes.push_back(new long(0));
-	vertexIndexes.push_back(new long(1));
-	vertexIndexes.push_back(new long(2));
-	vertexIndexes.push_back(new long(0));
-	vertexIndexes.push_back(new long(3));
-	vertexIndexes.push_back(new long(1));
-	std::vector<Vec3*> normals;
-	normals.push_back(new Vec3(0, 0, -1));
-	Vec3 temp = Vec3(-0.5, -0.5, -0.5).normalize();
-	Vec3* poi = new Vec3(temp);
-	normals.push_back(poi);
-	Mesh* mesh = new Mesh(vertices, vertexIndexes, normals);
-	Material* material = materialList->getMaterial("material2");
-	Object* object = new Object(mesh, material);
-	scene->addObject(object);
-	*/
+
 	render(image, scene, camera);
 	std::cout << "Aperte enter para sair:";
 	std::cin.get();
