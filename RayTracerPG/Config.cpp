@@ -132,6 +132,7 @@ void Config::createMesh(std::istringstream& line, Scene* scene, MaterialList* ma
 	Material* material = materialList->getMaterial(materialName);
 	Object* object = new Object(mesh, material);
 	scene->addObject(object);
+	std::cout << "Mesh " << fileName << " Carregada, usando o material: " << material->getName() << std::endl << std::endl;
 }
 
 void Config::createLight(std::istringstream& line, Scene* scene)

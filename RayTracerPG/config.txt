@@ -6,11 +6,11 @@ res 1280 720
 
 #câmera
 #camera px py pz tx ty tz ux uy uz fov f
-camera 1 1 2.5 0 0 0 0 1 0 75 1.0
+camera 400 500 500 100 250 0 0 1 0 75 1.0
 
 #materiais
 #material name r g b kd ks ke alpha
-material material1 1 0.89 0.46 0.3 0.2 0.2 50
+material material1 1 0.89 0.46 0.2 0.3 0.1 50
 
 #objetos
 #sphere cx cy cz r materialName
@@ -22,4 +22,4 @@ mesh Wolf2.obj material1
 
 #luzes (pontual)
 #light px py pz r g b intensity
-light 3 15 10 1 1 1 13000
+light 750 750 750 1 1 1 20000000

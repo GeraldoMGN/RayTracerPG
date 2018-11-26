@@ -39,10 +39,21 @@ ObjectIntersection* castRay(Ray& ray, Scene* scene) {
 	return intersecInfo;
 }
 
+//retorna a cor do backgound caso não haja interseção
+Vec3* backgroundColor(const int& x, const int& y, const int& maxX, const int& maxY) {
+	double maxDistance = sqrt(((maxX / 2) * (maxX / 2)) + (maxY/2 * maxY/2));
+	double xDistance = abs(x - maxX/2);
+	double yDistance = abs(y - maxY/2);
+	double distance = sqrt((xDistance * xDistance) + (yDistance * yDistance));
+	double gradient = distance / maxDistance;
+	Vec3 color = Vec3(0.3) * gradient + Vec3(0.7) * (1.0 - gradient);
+	return new Vec3(color);
+}
+
 //calcula a cor do pixel
 Vec3* shade(Ray& ray, ObjectIntersection* intersecInfo, Scene* scene) {
 	if (intersecInfo == NULL)
-		return new Vec3(0.5f);
+		return NULL;
 
 	Vec3 color = Vec3(0.0f);
 	Vec3 difuse = Vec3(0.0f);
@@ -78,16 +89,21 @@ Vec3* shade(Ray& ray, ObjectIntersection* intersecInfo, Scene* scene) {
 void render(Image* image, Scene* scene, Camera* camera) {
 	for (int y = 0; y < image->getHeight(); y++) {
 		for (int x = 0; x < image->getWidth(); x++) {
+			//criação do raio
 			Ray ray = camera->getRay(x, y, image->getWidth(), image->getHeight());
+			//Informaçoes da interseção com o objeto mais próximo
 			ObjectIntersection* intersecInfo = castRay(ray, scene);
+			//cor do pixel
 			Vec3* pixelColor = shade(ray, intersecInfo, scene);
+			if (pixelColor == NULL)
+				pixelColor = backgroundColor(x, y, image->getWidth(), image->getHeight());
 			image->SetPixel(x, y, pixelColor);
+			
+			if ( x == 0 && (y + 1) % 100 == 0)
+				std::cout << "linha " << y + 1 << std::endl;
 			delete[] intersecInfo;
-			if (x==0)
-				std::cout << "line " << y << std::endl;
 		}
 	}
-	image->SaveAsPPM();
 }
 
 int main() {
@@ -97,10 +113,15 @@ int main() {
 	Scene* scene = new Scene();
 
 	Config::readConfigFile(image, camera, scene, materialList);
+	std::cout << "Arquivo de configuracao lido." << std::endl;
 	camera->setCamToWorldMatrix();
 	
-
+	std::cout << "Renderizacao iniciada." << std::endl;
 	render(image, scene, camera);
+	
+	std::cout << "Renderizacao concluida, salvando imagem." << std::endl;
+	image->SaveAsPPM();
+	
 	std::cout << "Aperte enter para sair:";
 	std::cin.get();
 

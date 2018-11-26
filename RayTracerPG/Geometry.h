@@ -37,8 +37,10 @@ private:
 public:
 	Mesh(std::vector<double>& vertices, std::vector<tinyobj::index_t>& vertexIndexes, 
 		std::vector<double>& normals, std::vector<unsigned char>& faceVertex);
+	
 	bool intersect(const Ray& r, ObjectIntersection* info = nullptr) const override;
 	bool intersectTriangle(const Ray& ray, const Vec3* vertex0, const Vec3* vertex1, const Vec3* vertex2, 
 		ObjectIntersection* info, double& u, double& v) const;
 	Vec3 interpolateNormal(int& index, double& u, double& v) const;
+	Vec3 faceNormal(Vec3* vertex0, Vec3* vertex1, Vec3* vertex2) const;
 };

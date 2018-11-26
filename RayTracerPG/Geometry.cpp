@@ -67,7 +67,10 @@ bool Mesh::intersect(const Ray& ray, ObjectIntersection* info) const
 			intersec = true;
 		if (intersec && tempInfo->t < info->t) {
 			*info = *tempInfo;
-			info->n = interpolateNormal(i, u, v);
+			if(normals.size() == 0)
+				info->n = faceNormal(vertex0, vertex1, vertex2);
+			else
+				info->n = interpolateNormal(i, u, v);
 		}
 		delete[] tempInfo;
 		delete[] vertex0;
@@ -125,4 +128,9 @@ Vec3 Mesh::interpolateNormal(int& index, double & u, double & v) const
 	delete[] normal2;
 
 	return normal;
+}
+
+Vec3 Mesh::faceNormal(Vec3* vertex0, Vec3* vertex1, Vec3* vertex2) const
+{
+		return (*vertex1 - *vertex0).crossProduct(*vertex2 - *vertex0).normalize();
 }
