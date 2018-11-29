@@ -11,9 +11,13 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "Include/tiny_obj_loader.h"
 
+#include <thread>
+#include <vector>
 #include <float.h>
 #include <algorithm>
 #include <iostream>
+
+std::vector<std::thread> threads;
 
 //Quando os vetores estão normalizados, retorna 1 se tiver paralelo a 0 caso esteja perpendicular.
 double facingRatio(Vec3 vector1, Vec3 vector2) {
@@ -46,9 +50,7 @@ Vec3* backgroundColor(const int& x, const int& y, const int& maxX, const int& ma
 	double yDistance = abs(y - maxY/2);
 	double distance = sqrt((xDistance * xDistance) + (yDistance * yDistance));
 	double gradient = distance / maxDistance;
-	Vec3 color = Vec3(0.3) * gradient + Vec3(0.6
-	
-	) * (1.0 - gradient);
+	Vec3 color = Vec3(0.3) * gradient + Vec3(0.6) * (1.0 - gradient);
 	return new Vec3(color);
 }
 
@@ -88,24 +90,29 @@ Vec3* shade(Ray& ray, ObjectIntersection* intersecInfo, Scene* scene) {
 	return new Vec3(color);
 }
 
+void renderLine(int y, Image* image, Scene* scene, Camera* camera) {
+	for (int x = 0; x < image->getWidth(); x++) {
+		//criação do raio
+		Ray ray = camera->getRay(x, y, image->getWidth(), image->getHeight());
+		//Informaçoes da interseção com o objeto mais próximo
+		ObjectIntersection* intersecInfo = castRay(ray, scene);
+		//cor do pixel
+		Vec3* pixelColor = shade(ray, intersecInfo, scene);
+		if (pixelColor == NULL)
+			pixelColor = backgroundColor(x, y, image->getWidth(), image->getHeight());
+		image->SetPixel(x, y, pixelColor);
+
+		if (x == 0 && (y + 1) % 100 == 0)
+			std::cout << "linha " << y + 1 << std::endl;
+		delete[] intersecInfo;
+	}
+}
+
 void render(Image* image, Scene* scene, Camera* camera) {
 	for (int y = 0; y < image->getHeight(); y++) {
-		for (int x = 0; x < image->getWidth(); x++) {
-			//criação do raio
-			Ray ray = camera->getRay(x, y, image->getWidth(), image->getHeight());
-			//Informaçoes da interseção com o objeto mais próximo
-			ObjectIntersection* intersecInfo = castRay(ray, scene);
-			//cor do pixel
-			Vec3* pixelColor = shade(ray, intersecInfo, scene);
-			if (pixelColor == NULL)
-				pixelColor = backgroundColor(x, y, image->getWidth(), image->getHeight());
-			image->SetPixel(x, y, pixelColor);
-			
-			if ( x == 0 && (y + 1) % 100 == 0)
-				std::cout << "linha " << y + 1 << std::endl;
-			delete[] intersecInfo;
-		}
+		threads.push_back(std::thread(renderLine, y, image, scene, camera));
 	}
+	std::for_each(threads.begin(), threads.end(), std::mem_fn(&std::thread::join));
 }
 
 int main() {
