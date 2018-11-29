@@ -44,16 +44,27 @@ bool Sphere::intersect(const Ray& ray, ObjectIntersection* info) const
 	return true;
 }
 
-Mesh::Mesh(std::vector<double>& vertices, std::vector<tinyobj::index_t>& vertexIndexes, 
-	std::vector<double>& normals, std::vector<unsigned char>& faceVertex)
-	: vertices(vertices), vertexIndexes(vertexIndexes), normals(normals), faceVertex(faceVertex)
+Mesh::Mesh(std::vector<double>& vertices, std::vector<tinyobj::shape_t>& shapes,
+	std::vector<double>& normals)
+	: vertices(vertices), normals(normals)
 {
+	//já que o .obj é separado em grupos, o seguinte une todos os grupos num único mesh
+	for (int i = 0; i < shapes.size(); i++) {
+		tinyobj::mesh_t shape = shapes.at(i).mesh;
+		for (int j = 0; j < shape.indices.size(); j++) {
+			vertexIndexes.push_back(shape.indices.at(j));
+		}
+		for (int j = 0; j < shape.num_face_vertices.size(); j++) {
+			faceVertex.push_back(shape.num_face_vertices.at(j));
+		}
+	}
 }
 
 bool Mesh::intersect(const Ray& ray, ObjectIntersection* info) const
 {
 	bool intersec = false;
 	for (int i = 0; i < faceVertex.size(); i++) {
+		//Calcula as 3 vertices do triangulo
 		int index0 = vertexIndexes.at(i * 3).vertex_index;
 		Vec3* vertex0 = new Vec3(vertices.at(index0 * 3), vertices.at(index0 * 3 + 1), vertices.at(index0 * 3 + 2));
 		int index1 = vertexIndexes.at(i * 3 + 1).vertex_index;
@@ -62,16 +73,18 @@ bool Mesh::intersect(const Ray& ray, ObjectIntersection* info) const
 		Vec3* vertex2 = new Vec3(vertices.at(index2 * 3), vertices.at(index2 * 3 + 1), vertices.at(index2 * 3 + 2));
 
 		ObjectIntersection* tempInfo = new ObjectIntersection{ DBL_MAX, Vec3(0.0f), Vec3(0.0f), info->o};
-		double u, v;
+		double u, v;		//coordenadas baricentricas
 		if (intersectTriangle(ray, vertex0, vertex1, vertex2, tempInfo, u, v))
 			intersec = true;
 		if (intersec && tempInfo->t < info->t) {
 			*info = *tempInfo;
-			if(normals.size() == 0)
+			if(normals.size() == 0)	//se não houver normais no .obj, calcula
 				info->n = faceNormal(vertex0, vertex1, vertex2);
-			else
+			else					//caso haja, usa interpolação para dar um resultado mais "Polido"
 				info->n = interpolateNormal(i, u, v);
 		}
+		
+		//Salvar memória
 		delete[] tempInfo;
 		delete[] vertex0;
 		delete[] vertex1;

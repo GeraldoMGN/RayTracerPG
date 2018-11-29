@@ -128,7 +128,8 @@ void Config::createMesh(std::istringstream& line, Scene* scene, MaterialList* ma
 		std::cout << err << std::endl;
 		throw std::runtime_error(err);
 	}
-	Mesh* mesh = new Mesh(attrib.vertices, shapes[0].mesh.indices, attrib.normals, shapes[0].mesh.num_face_vertices);
+
+	Mesh* mesh = new Mesh(attrib.vertices, shapes, attrib.normals);
 	Material* material = materialList->getMaterial(materialName);
 	Object* object = new Object(mesh, material);
 	scene->addObject(object);

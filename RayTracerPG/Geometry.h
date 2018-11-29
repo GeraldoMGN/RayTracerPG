@@ -35,8 +35,8 @@ private:
 
 
 public:
-	Mesh(std::vector<double>& vertices, std::vector<tinyobj::index_t>& vertexIndexes, 
-		std::vector<double>& normals, std::vector<unsigned char>& faceVertex);
+	Mesh(std::vector<double>& vertices, std::vector<tinyobj::shape_t>& shapes,
+		std::vector<double>& normal);
 	
 	bool intersect(const Ray& r, ObjectIntersection* info = nullptr) const override;
 	bool intersectTriangle(const Ray& ray, const Vec3* vertex0, const Vec3* vertex1, const Vec3* vertex2, 

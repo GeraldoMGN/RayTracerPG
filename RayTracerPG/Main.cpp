@@ -46,7 +46,9 @@ Vec3* backgroundColor(const int& x, const int& y, const int& maxX, const int& ma
 	double yDistance = abs(y - maxY/2);
 	double distance = sqrt((xDistance * xDistance) + (yDistance * yDistance));
 	double gradient = distance / maxDistance;
-	Vec3 color = Vec3(0.3) * gradient + Vec3(0.7) * (1.0 - gradient);
+	Vec3 color = Vec3(0.3) * gradient + Vec3(0.6
+	
+	) * (1.0 - gradient);
 	return new Vec3(color);
 }
 
