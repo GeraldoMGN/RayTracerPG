@@ -1,0 +1,25 @@
+#comentário
+
+#resolução
+#res width height
+res 1280 720
+
+#câmera
+#camera px py pz tx ty tz ux uy uz fov f
+camera 400 500 500 100 250 0 0 1 0 75 1.0
+
+#materiais
+#material name r g b kd ks ke alpha
+material material1 1 0.89 0.46 0.2 0.3 0.1 50
+
+#objetos
+#sphere cx cy cz r materialName
+#sphere 7 10 35 10 material1
+#sphere -7 -10 35 10 material1
+
+#mesh file.obj materialName
+mesh Wolf2.obj material1
+
+#luzes (pontual)
+#light px py pz r g b intensity
+light 750 750 750 1 1 1 20000000
