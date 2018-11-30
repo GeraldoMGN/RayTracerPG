@@ -9,6 +9,7 @@ Material * MaterialList::getMaterial(std::string name)
 			return materials.at(i);
 		}
 	}
+	return NULL;
 }
 
 bool MaterialList::nameUsed(std::string name)
