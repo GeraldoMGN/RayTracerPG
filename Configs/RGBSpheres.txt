@@ -1,0 +1,26 @@
+#comentário
+
+#resolução
+#res width height
+res 1920 1080
+
+#câmera
+#camera px py pz tx ty tz ux uy uz fov f
+camera 0 0 0 0 0 35 0 1 0 75 1.0
+
+#materiais
+#material name r g b kd ks ke alpha
+material materialR 1 0 0 0.3 0.2 0.1 50
+material materialG 0 1 0 0.3 0.2 0.1 50
+material materialB 0 0 1 0.3 0.2 0.1 50
+
+#objetos
+#sphere cx cy cz r materialName
+#mesh file.obj materialName
+sphere 25 0 35 10 materialR
+sphere 0 0 35 10 materialG
+sphere -25 0 35 10 materialB
+
+#luzes (pontual)
+#light px py pz r g b intensity
+light 0 30 20 1 1 1 20000
