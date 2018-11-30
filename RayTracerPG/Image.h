@@ -3,7 +3,6 @@
 #include "Vec3.h"
 
 #include <vector>
-#include <string>
 
 class Image {
 private:

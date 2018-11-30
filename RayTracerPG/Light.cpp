@@ -4,8 +4,10 @@ Light::Light(Vec3 position, Vec3 color, double intensity) : position(position), 
 
 Vec3 Light::intensityAtP(Vec3& P) const
 {
+	//A intensidade da luz em um ponto P é calculada em função da área da superficie da esfera
 	double distance = (P - position).length();
-	return (color / (4 * PI * distance * distance)) * intensity;
+	return (color  * intensity) / 
+		(4 * PI * distance * distance);
 }
 
 Vec3 Light::getPosition() const

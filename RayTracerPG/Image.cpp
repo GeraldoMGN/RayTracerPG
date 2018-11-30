@@ -19,8 +19,8 @@ void Image::SaveAsPPM() const {
 	ofs << "P3\n" << width << " " << height << "\n255\n";
 	for (int i = 0; i < width * height; i++) {
 		ofs << (unsigned int)(std::min(double(1), buffer[i]->getX()) * 255) << " " <<
-			(unsigned int)(std::min(double(1), buffer[i]->getY()) * 255) << " " <<
-			(unsigned int)(std::min(double(1), buffer[i]->getZ()) * 255) << " ";
+			   (unsigned int)(std::min(double(1), buffer[i]->getY()) * 255) << " " <<
+			   (unsigned int)(std::min(double(1), buffer[i]->getZ()) * 255) << " ";
 	}
 	ofs.close();
 }

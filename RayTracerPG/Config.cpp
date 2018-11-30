@@ -18,22 +18,22 @@ void Config::readConfigFile(Image* image, Camera* camera, Scene* scene, Material
 		std::istringstream is_line(line);
 		
 		std::getline(is_line, key, ' ');
-		if (key == "res") {						//resoluçao
+		if (key == "res") {
 			setRes(is_line, image);
 		}
-		else if (key == "camera") {					//camera
+		else if (key == "camera") {
 			setCamera(is_line, camera);
 		}
-		else if (key == "material") {					//camera
+		else if (key == "material") {
 			createMaterial(is_line, materialList);
 		}
-		else if (key == "sphere") {					//camera
+		else if (key == "sphere") {
 			createSphere(is_line, scene, materialList);
 		}
-		else if (key == "mesh") {					//camera
+		else if (key == "mesh") {
 			createMesh(is_line, scene, materialList);
 		}
-		else if (key == "light") {					//camera
+		else if (key == "light") {
 			createLight(is_line, scene);
 		}
 	}
@@ -119,11 +119,13 @@ void Config::createMesh(std::istringstream& line, Scene* scene, MaterialList* ma
 	std::string fileName = readString(line);
 	std::string materialName = readString(line);
 
-	tinyobj::attrib_t attrib;
-	std::vector<tinyobj::shape_t> shapes;
-	std::vector<tinyobj::material_t> materials;
+	//Carregamento da mesh
+	tinyobj::attrib_t attrib;						//Contém as vertices e normais
+	std::vector<tinyobj::shape_t> shapes;			//Contém os grupos de mesh e seus indices
+	std::vector<tinyobj::material_t> materials;		//Nào usada
 	std::string err;
 	std::string path = "objs/" + fileName;
+	//Carrega o arquivo
 	if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &err, path.c_str())) {
 		std::cout << err << std::endl;
 		throw std::runtime_error(err);

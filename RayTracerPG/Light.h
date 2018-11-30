@@ -9,6 +9,7 @@ private:
 	double intensity;
 public:
 	Light(Vec3 position, Vec3 color, double intensity);
+	
 	//retorna a intensidade da luz no ponto P (RGB)
 	Vec3 intensityAtP(Vec3& P) const;
 	

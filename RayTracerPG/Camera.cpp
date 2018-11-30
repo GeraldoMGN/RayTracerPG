@@ -4,11 +4,12 @@ Camera::Camera(Vec3 position, Vec3 target, Vec3 up, double fov, double f) : posi
 
 Ray Camera::getRay(double x, double y, int width, int height) const
 {
-	//TODO: implementar distancia do plano de imagem
+	//Direção em que o raio será lançado
 	double aspectRatio = (double)width / (double)height;
 	double Px = (2 * (x + 0.5) / (double)width - 1) * tan(this->fov / 2 * PI / 180) * aspectRatio * f;
 	double Py = (1 - 2 * (y + 0.5) / (double)height) * tan(this->fov / 2 * PI / 180) * f;
 	
+	//tranformação do espaço de Camera para o de mundo
 	Vec3 origin = pointCamToWorld(Vec3(0.0f));
 	Vec3 direction(Px, Py, -1);
 	direction = vectorCamToWorld(direction);

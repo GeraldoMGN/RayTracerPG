@@ -94,9 +94,14 @@ bool Mesh::intersect(const Ray& ray, ObjectIntersection* info) const
 }
 
 bool Mesh::intersectTriangle(const Ray& ray, const Vec3* vertex0, const Vec3* vertex1, const Vec3* vertex2, 
-	ObjectIntersection* info, double& u, double& v) const
+	ObjectIntersection* info, double& u, double& v)
 {
-	//baseado no algoritmo de interseção de Möller–Trumbore
+	//Algoritmo de interseção de Möller–Trumbore
+		//	Consiste em colocar o ponto de interseção em função das coordenadas baricentricas u e v,
+		//e da distancia à origem t, com isso o espaço é definido na base t, u e v, em vez de x, y e z.
+		//	Então a equação resultante é colocada em forma matricial e o seguinte algoritmo o resolve,
+		//com usando regra de Cramer.
+		//	Artigo original em: https://cadxfem.org/inf/Fast%20MinimumStorage%20RayTriangle%20Intersection.pdf
 
 	//As duas arestas ligadas ao vertice 0
 	Vec3 edge0 = *vertex1 - *vertex0;
@@ -105,28 +110,32 @@ bool Mesh::intersectTriangle(const Ray& ray, const Vec3* vertex0, const Vec3* ve
 	//calculo do determinante
 	Vec3 pvec = ray.getDirection().crossProduct(edge1);
 	double determinant = edge0.dotProduct(pvec);
-	if (determinant > -EPSILON && determinant < EPSILON)
-		return false;
+	if (determinant > -EPSILON && determinant < EPSILON)	//Caso o determinante seja proximo de 0(Epsilon, para problemas 
+		return false;										//de precisão de ponto flutuante)
 	
+	//calculo da coordenada baricentrica u
 	Vec3 tvec = ray.getOrigin() - *vertex0;
 	u = tvec.dotProduct(pvec) / determinant;
-	if (u < 0.0 || u > 1.0)
+	if (u < 0.0 || u > 1.0)									//interseção fora do triangulo
 		return false;
 
+	//calculo da coordenada baricentrica v
 	Vec3 qvec = tvec.crossProduct(edge0);
 	v = ray.getDirection().dotProduct(qvec) / determinant;
-	if (v < 0.0 || u + v > 1.0)
+	if (v < 0.0 || u + v > 1.0)								//interseção fora do triangulo
 		return false;
 
 	info->t = edge1.dotProduct(qvec) / determinant;
-	if (info->t < 0)
+	if (info->t < 0)										//interseção atrás da camera
 		return false;
 	info->p = ray.getOrigin() + (ray.getDirection() * info->t);
+	
 	return true;
 }
 
 Vec3 Mesh::interpolateNormal(int& index, double & u, double & v) const
-{
+{	
+	//calculo das normais de cada vertice
 	int normalIndex0 = vertexIndexes.at(index * 3 + 0).normal_index;
 	Vec3* normal0 = new Vec3(normals.at(normalIndex0 * 3), normals.at(normalIndex0 * 3 + 1), normals.at(normalIndex0 * 3 + 2));
 	int normalIndex1 = vertexIndexes.at(index * 3 + 1).normal_index;
@@ -134,6 +143,7 @@ Vec3 Mesh::interpolateNormal(int& index, double & u, double & v) const
 	int normalIndex2 = vertexIndexes.at(index * 3 + 2).normal_index;
 	Vec3* normal2 = new Vec3(normals.at(normalIndex2 * 3), normals.at(normalIndex2 * 3 + 1), normals.at(normalIndex2 * 3 + 2));
 
+	//interpolação de acordo com as coordenadas baricentricas u e v
 	Vec3 normal = Vec3((*normal0 * (1 - u - v)) + *normal1 * u + *normal2 * v);
 
 	delete[] normal0;

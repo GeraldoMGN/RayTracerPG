@@ -38,7 +38,7 @@ ObjectIntersection* castRay(Ray& ray, Scene* scene) {
 			}
 		}
 	}
-	if (intersecInfo->t == DBL_MAX)
+	if (intersecInfo->t == DBL_MAX)		//caso não haja interseção
 		return NULL;
 	return intersecInfo;
 }
@@ -68,24 +68,28 @@ Vec3* shade(Ray& ray, ObjectIntersection* intersecInfo, Scene* scene) {
 	for (int i = 0; i < scene->getNumberLights(); i++) {
 		Vec3 lightDirection = (intersecInfo->p - scene->getLight(i)->getPosition()).normalize();
 		Vec3 lightIntensity = scene->getLight(i)->intensityAtP(intersecInfo->p);
+		Vec3 hitPoint = intersecInfo->p + (Vec3(0.0f) - lightDirection) * BIAS;		
+		//Bias necessario para resolver problemas de precisão de ponto flutuante
 		
-		Vec3 hitPoint = intersecInfo->p + (Vec3(0.0f) - lightDirection) * BIAS;
+		//raio de sombra
 		Ray shadowRay = Ray(hitPoint, Vec3(0.0f) - lightDirection);
 		ObjectIntersection* shadowIntersec = castRay(shadowRay, scene);
 		
 		bool directLight = (shadowIntersec == NULL || shadowIntersec->t >= (intersecInfo->p - scene->getLight(i)->getPosition()).length());
 
 		if (directLight) {
+			//componente difuso para uma luz
 			difuse = difuse + (materialColor * lightIntensity * facingRatio(intersecInfo->n, lightDirection));
-
+			//componente especular para uma luz
 			Vec3 reflected = lightDirection.reflect(intersecInfo->n);
 			specular = specular + (lightIntensity * std::pow(facingRatio(reflected, lightDirection), intersecInfo->o->getMaterial()->getAlpha()));
 		}
 		delete[] shadowIntersec;
 	}
-
-	color = difuse * intersecInfo->o->getMaterial()->getKd() + 
-		(specular * intersecInfo->o->getMaterial()->getKs()) +
+	
+	//adição dos diversos componentes (difuso, especular e emissivo)
+	color = difuse    * intersecInfo->o->getMaterial()->getKd() + 
+		specular      * intersecInfo->o->getMaterial()->getKs() +
 		materialColor * intersecInfo->o->getMaterial()->getKe();
 	return new Vec3(color);
 }
@@ -108,6 +112,7 @@ void renderLine(int y, Image* image, Scene* scene, Camera* camera) {
 	}
 }
 
+//Separa o processamento por linha
 void render(Image* image, Scene* scene, Camera* camera) {
 	for (int y = 0; y < image->getHeight(); y++) {
 		threads.push_back(std::thread(renderLine, y, image, scene, camera));

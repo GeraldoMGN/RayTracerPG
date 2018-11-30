@@ -27,8 +27,7 @@ bool MaterialList::addMaterial(Material* material)
 		materials.push_back(material);
 		return true;
 	}
-	else {
-		return false;
-	}
+	return false;
+
 }
 

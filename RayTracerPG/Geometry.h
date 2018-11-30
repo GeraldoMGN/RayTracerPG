@@ -38,9 +38,14 @@ public:
 	Mesh(std::vector<double>& vertices, std::vector<tinyobj::shape_t>& shapes,
 		std::vector<double>& normal);
 	
+	//interseção com o mesh
 	bool intersect(const Ray& r, ObjectIntersection* info = nullptr) const override;
-	bool intersectTriangle(const Ray& ray, const Vec3* vertex0, const Vec3* vertex1, const Vec3* vertex2, 
-		ObjectIntersection* info, double& u, double& v) const;
+	//interseção com um triangulo individual
+	static bool intersectTriangle(const Ray& ray, const Vec3* vertex0, const Vec3* vertex1, 
+		const Vec3* vertex2, ObjectIntersection* info, double& u, double& v);
+
+	//retorna a normal dada pela interpolação dos vertices
 	Vec3 interpolateNormal(int& index, double& u, double& v) const;
+	//Retorna a normal da face (usada caso não se tenha as normais no mesh)
 	Vec3 faceNormal(Vec3* vertex0, Vec3* vertex1, Vec3* vertex2) const;
 };
