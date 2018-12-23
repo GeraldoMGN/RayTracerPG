@@ -110,3 +110,12 @@ Vec3 Mesh::faceNormal(Vec3* vertex0, Vec3* vertex1, Vec3* vertex2) const
 {
 	return (*vertex1 - *vertex0).crossProduct(*vertex2 - *vertex0).normalize();
 }
+
+std::vector<tinyobj::index_t> Mesh::getFacesInBox(Vec3 * boundingPoints) const
+{
+	//Should go through all the faces(sequence of tree vertices) and return a list of 
+	//those who are inside de AABBox
+	//Note: Maybe i can extract a method to create the vertices from intersect() and interpolateNormal()
+	
+	return std::vector<tinyobj::index_t>();
+}

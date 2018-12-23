@@ -1,12 +1,14 @@
 #include "AABBox.h"
-#include "Vec3.h"
 
-AABBox::AABBox (Vec3& boundingPoint1, Vec3& boundingPoint2) {
+AABBox::AABBox (Vec3& boundingPoint1, Vec3& boundingPoint2, Mesh* mesh) {
 	boundingPoints[0] = &boundingPoint1;
 	boundingPoints[1] = &boundingPoint2;
+
+	//Should get the triangles inside the region of this bound box
+	faces = mesh->getFacesInBox(*boundingPoints);
 }
 
-bool AABBox::intersect(const Ray& ray) const
+const AABBox* AABBox::intersect(const Ray& ray) const
 {
 	double txMin, txMax, tyMin, tyMax, tzMin, tzMax;
 	Vec3 invertedDirection = ray.getDirection().inverted();
@@ -21,7 +23,7 @@ bool AABBox::intersect(const Ray& ray) const
 	tyMax = (this->boundingPoints[1 - signs[1]]->getY() - ray.getOrigin().getY()) * invertedDirection.getY();
 
 	if ((txMin > tyMax) || (tyMin > txMax))
-		return false;
+		return NULL;
 	if (tyMin > txMin)
 		txMin = tyMin;
 	if (tyMax < txMax)
@@ -31,11 +33,17 @@ bool AABBox::intersect(const Ray& ray) const
 	tzMax = (boundingPoints[1 - signs[2]]->getZ() - ray.getOrigin().getZ()) * invertedDirection.getZ();
 
 	if ((txMin > tzMax) || (tzMin > txMax))
-		return false;
+		return NULL;
 	if (tzMin > txMin)
 		txMin = tzMin;
 	if (tzMax < txMax)
 		txMax = tzMax;
 
-	return true;
+	if (level == maxLevel)
+		return this;
+
+	const AABBox* subBox;
+	for (int i = 0; i < 8; i++)
+		subBox = this->subBoxes[i]->intersect(ray);
+	return subBox;
 }
