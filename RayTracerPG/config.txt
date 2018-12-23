@@ -2,7 +2,7 @@
 
 #resolução
 #res width height
-res 1280 720
+res 1920 1080
 
 #câmera
 #camera px py pz tx ty tz ux uy uz fov f
@@ -18,7 +18,7 @@ material material1 1 0.89 0.46 0.2 0.3 0.1 50
 #sphere -7 -10 35 10 material1
 
 #mesh file.obj materialName
-mesh Wolf2.obj material1
+mesh bunny.obj material1
 
 #luzes (pontual)
 #light px py pz r g b intensity

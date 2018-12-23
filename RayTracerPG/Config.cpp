@@ -44,7 +44,7 @@ void Config::setRes(std::istringstream& line, Image* image)
 	int w = readInt(line);
 	int h = readInt(line);
 	
-	std::cout << "Criando uma imagem com " << w << " pixeis por " << h << " pixeis." << std::endl << std::endl;
+	std::cout << "Creating a image with resolution: " << w << "x" << h << "." << std::endl << std::endl;
 	
 	*image = Image(w, h);
 }
@@ -63,10 +63,10 @@ void Config::setCamera(std::istringstream& line, Camera* camera)
 	double fov = readDouble(line);
 	double f   = readDouble(line);
 	
-	std::cout << "Criando uma camera em: X = " << px << " Y = " << py << " Z = " << pz << std::endl <<
-		"       apontando para: X = " << tx << " Y = " << ty << " Z = " << tz << std::endl <<
-		"  vetor de orientacao: X = " << ux << " Y = " << uy << " Z = " << uz << std::endl <<
-		"com " << fov << " graus de campo de visao e " << f << " de distancia para o plano da imagem." << std::endl << std::endl;
+	std::cout << "Creating a camera in: X = " << px << " Y = " << py << " Z = " << pz << std::endl <<
+				 "	with target in: X = " << tx << " Y = " << ty << " Z = " << tz << std::endl <<
+				 "	and up vector: X = " << ux << " Y = " << uy << " Z = " << uz << std::endl <<
+		"	with " << fov << " degrees of field of view and " << f << " meters of distance to the rendering plane." << std::endl << std::endl;
 	
 	*camera = Camera(Vec3(px, py, pz), Vec3(tx, ty, tz), Vec3(ux, uy, uz), fov, f);
 }
@@ -84,10 +84,10 @@ void Config::createMaterial(std::istringstream& line, MaterialList* materialList
 
 	Material* material = new Material(name, Ke, Kd, Ks, alpha, Vec3(r, g, b));
 	if (!materialList->addMaterial(material)){
-		std::cout << "Nome " << name << " ja existente." << std::endl << std::endl;
+		std::cout << "Name " << name << " already exists." << std::endl << std::endl;
 	} else {
-		std::cout << "Criando " + name + " de cor: R = " << r << " G = " << g << " B = " << b << std::endl <<
-			"Coeficientes: Kd = " << Kd << " Ks = " << Ks << " Ke = " << Ke << " Alpha = " << alpha << std::endl << std::endl;
+		std::cout << "Creating material " + name + " with color: R = " << r << " G = " << g << " B = " << b << std::endl <<
+			"	Coefficients: Kd = " << Kd << " Ks = " << Ks << " Ke = " << Ke << " Alpha = " << alpha << std::endl << std::endl;
 	}
 }
 
@@ -102,14 +102,14 @@ void Config::createSphere(std::istringstream& line, Scene* scene, MaterialList* 
 
 	Material* material = materialList->getMaterial(materialName);
 	if (material == NULL) {
-		std::cout << "Material não encontrado, esfera não criada" << std::endl << std::endl;
+		std::cout << "Material not found, sphere not created." << std::endl << std::endl;
 		return;
 	}
 	Sphere* sphereGeometry = new Sphere(Vec3(cx, cy, cz), r);
 	Object* sphere = new Object(sphereGeometry, material);
 
-	std::cout << "Criando uma esfera em: X = " << cx << " Y = " << cy << " Z = " << cz << std::endl <<
-		"com raio = " << r << ", usando o material: " << material->getName() << std::endl << std::endl;
+	std::cout << "Creating a sphere in: X = " << cx << " Y = " << cy << " Z = " << cz << std::endl <<
+		"	with radius = " << r << ", using meterial " << material->getName() << std::endl << std::endl;
 
 	scene->addObject(sphere);
 }
@@ -135,7 +135,7 @@ void Config::createMesh(std::istringstream& line, Scene* scene, MaterialList* ma
 	Material* material = materialList->getMaterial(materialName);
 	Object* object = new Object(mesh, material);
 	scene->addObject(object);
-	std::cout << "Mesh " << fileName << " Carregada, usando o material: " << material->getName() << std::endl << std::endl;
+	std::cout << "Mesh " << fileName << " loaded, using material: " << material->getName() << std::endl << std::endl;
 }
 
 void Config::createLight(std::istringstream& line, Scene* scene)
@@ -148,8 +148,8 @@ void Config::createLight(std::istringstream& line, Scene* scene)
 	double b = readDouble(line);
 	double intensity = readDouble(line);
 
-	std::cout << "Criando uma luz pontual em: X = " << px << " Y = " << pz << " Z = " << pz << std::endl <<
-		" de cor: R = " << r << " G = " << g << " B = " << b << " e intensidade = " << intensity << std::endl << std::endl;
+	std::cout << "Creating spot light in: X = " << px << " Y = " << pz << " Z = " << pz << std::endl <<
+		"	with color: R = " << r << " G = " << g << " B = " << b << " and intensity = " << intensity << std::endl << std::endl;
 
 	Light* light = new Light(Vec3(px, py, pz), Vec3(r, g, b), intensity);
 	scene->addLight(light);

@@ -1,12 +1,12 @@
 #include "Material.h"
 
-Material::Material(std::string name, double Ke, double Kd, double Ks, double alpha, Vec3 c)
-	:name(name), Ke(Ke), Kd(Kd), Ks(Ks), alpha(alpha), c(c)
+Material::Material(std::string name, double Ka, double Kd, double Ks, double alpha, Vec3 color)
+	:name(name), Ka(Ka), Kd(Kd), Ks(Ks), alpha(alpha), color(color)
 {}
 
-double Material::getKe() const
+double Material::getKa() const
 {
-	return this->Ke;
+	return this->Ka;
 }
 
 double Material::getKd() const
@@ -26,7 +26,7 @@ double Material::getAlpha() const
 
 Vec3 Material::getColor() const
 {
-	return this->c;
+	return this->color;
 }
 
 std::string Material::getName() const

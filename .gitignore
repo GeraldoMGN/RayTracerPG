@@ -260,3 +260,5 @@ __pycache__/
 *.pyc
 /RayTracerPG
 /Binaries/objs
+/Example/objs
+/Binaries/image.ppm

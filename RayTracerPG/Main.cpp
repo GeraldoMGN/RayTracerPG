@@ -16,6 +16,7 @@
 #include <float.h>
 #include <algorithm>
 #include <iostream>
+#include <chrono>
 
 std::vector<std::thread> threads;
 
@@ -90,7 +91,7 @@ Vec3* shade(Ray& ray, ObjectIntersection* intersecInfo, Scene* scene) {
 	//adição dos diversos componentes (difuso, especular e emissivo)
 	color = difuse    * intersecInfo->o->getMaterial()->getKd() + 
 		specular      * intersecInfo->o->getMaterial()->getKs() +
-		materialColor * intersecInfo->o->getMaterial()->getKe();
+		materialColor * intersecInfo->o->getMaterial()->getKa();
 	return new Vec3(color);
 }
 
@@ -107,7 +108,7 @@ void renderLine(int y, Image* image, Scene* scene, Camera* camera) {
 		image->SetPixel(x, y, pixelColor);
 
 		if (x == 0 && (y + 1) % 100 == 0)
-			std::cout << "linha " << y + 1 << std::endl;
+			std::cout << "line " << y + 1 << std::endl;
 		delete[] intersecInfo;
 	}
 }
@@ -121,22 +122,28 @@ void render(Image* image, Scene* scene, Camera* camera) {
 }
 
 int main() {
+	std::chrono::time_point<std::chrono::system_clock> startTime, endTime;
+	//Pointers
 	Image* image = new Image(0, 0);
 	Camera* camera = new Camera(Vec3(0),Vec3(0), Vec3(0), 0, 0);
 	MaterialList* materialList = new MaterialList();
 	Scene* scene = new Scene();
 
 	Config::readConfigFile(image, camera, scene, materialList);
-	std::cout << "Arquivo de configuracao lido." << std::endl;
+	std::cout << "Config file read" << std::endl;
 	camera->setCamToWorldMatrix();
-	
-	std::cout << "Renderizacao iniciada." << std::endl;
+
+	std::cout << "Rendering..." << std::endl;
+	startTime = std::chrono::system_clock::now();
 	render(image, scene, camera);
+	endTime = std::chrono::system_clock::now();
 	
-	std::cout << "Renderizacao concluida, salvando imagem." << std::endl;
+	std::cout << "Rendering complete. Saving file." << std::endl;
 	image->SaveAsPPM();
 	
-	std::cout << "Aperte enter para sair:";
+	std::chrono::duration<double> elapsedTime = endTime - startTime;
+	std::cout << "Render time: " <<	elapsedTime.count() << " seconds" << std::endl;
+	std::cout << "Press any key to close";
 	std::cin.get();
 
 	return 0;
