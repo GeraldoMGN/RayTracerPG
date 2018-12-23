@@ -34,6 +34,11 @@ Vec3 Vec3::normalize() const
 	return Vec3(normalizedX, normalizedY, normalizedZ);
 }
 
+Vec3 Vec3::inverted() const
+{
+	return Vec3(1 / this->x, 1 / this->y, 1 / this->z);
+}
+
 Vec3 Vec3::reflect(const Vec3& axis) const
 {
 	Vec3 rtn = *this - (axis * this->dotProduct(axis) * 2);

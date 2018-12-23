@@ -31,12 +31,10 @@ private:
 	std::vector<double> vertices;
 	std::vector<tinyobj::index_t> vertexIndexes;
 	std::vector<double> normals;
-	std::vector<unsigned char> faceVertex;
 
 
 public:
-	Mesh(std::vector<double>& vertices, std::vector<tinyobj::shape_t>& shapes,
-		std::vector<double>& normal);
+	Mesh(std::vector<double>& vertices, std::vector<tinyobj::shape_t>& shapes, std::vector<double>& normal);
 	
 	//interseção com o mesh
 	bool intersect(const Ray& r, ObjectIntersection* info = nullptr) const override;

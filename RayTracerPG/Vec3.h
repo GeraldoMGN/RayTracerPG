@@ -11,6 +11,7 @@ public:
 
 	double length() const;
 	Vec3 normalize() const;
+	Vec3 inverted() const;
 	Vec3 reflect(const Vec3& axis) const;
 
 	double getX() const;

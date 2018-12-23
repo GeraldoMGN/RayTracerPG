@@ -4,6 +4,7 @@
 #include "Geometry.h"
 #include "ObjectIntersection.h"
 #include "Consts.h"
+#include "AABBox.h"
 #include "Config.h"
 #include "MaterialList.h"
 
@@ -97,18 +98,18 @@ Vec3* shade(Ray& ray, ObjectIntersection* intersecInfo, Scene* scene) {
 
 void renderLine(int y, Image* image, Scene* scene, Camera* camera) {
 	for (int x = 0; x < image->getWidth(); x++) {
-		//criação do raio
+		//Ray creation
 		Ray ray = camera->getRay(x, y, image->getWidth(), image->getHeight());
-		//Informaçoes da interseção com o objeto mais próximo
+
+		//Intersection information of the nearest object
 		ObjectIntersection* intersecInfo = castRay(ray, scene);
-		//cor do pixel
+
+		//Pixel color
 		Vec3* pixelColor = shade(ray, intersecInfo, scene);
 		if (pixelColor == NULL)
 			pixelColor = backgroundColor(x, y, image->getWidth(), image->getHeight());
 		image->SetPixel(x, y, pixelColor);
 
-		if (x == 0 && (y + 1) % 100 == 0)
-			std::cout << "line " << y + 1 << std::endl;
 		delete[] intersecInfo;
 	}
 }
