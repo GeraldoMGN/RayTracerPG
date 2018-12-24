@@ -17,5 +17,7 @@ private:
 
 public:
 	AABBox(Vec3* boundingPoint1, Vec3* boundingPoint2, Mesh* mesh, int maxLevel, int level);
-	const AABBox* intersect(const Ray& r) const;
+	bool intersect(const Ray& r, ObjectIntersection* info, Mesh* mesh) const;
+
+	const std::vector<const tinyobj::index_t*> getVerticesIndices() const;
 };

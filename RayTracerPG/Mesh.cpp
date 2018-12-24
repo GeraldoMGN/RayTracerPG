@@ -47,6 +47,39 @@ bool Mesh::intersect(const Ray& ray, ObjectIntersection* info) const
 	return intersec;
 }
 
+bool Mesh::intersect(const Ray& ray, ObjectIntersection* info, const std::vector<const tinyobj::index_t*>& verticesIndexes) const
+{
+	bool intersec = false;
+	for (int i = 0; i < verticesIndexes.size() / 3; i++) {
+		//Calcula as 3 vertices do triangulo
+		int index0 = verticesIndexes.at(i * 3)->vertex_index;
+		Vec3* vertex0 = new Vec3(vertices.at(index0 * 3), vertices.at(index0 * 3 + 1), vertices.at(index0 * 3 + 2));
+		int index1 = verticesIndexes.at(i * 3 + 1)->vertex_index;
+		Vec3* vertex1 = new Vec3(vertices.at(index1 * 3), vertices.at(index1 * 3 + 1), vertices.at(index1 * 3 + 2));
+		int index2 = verticesIndexes.at(i * 3 + 2)->vertex_index;
+		Vec3* vertex2 = new Vec3(vertices.at(index2 * 3), vertices.at(index2 * 3 + 1), vertices.at(index2 * 3 + 2));
+
+		ObjectIntersection* tempInfo = new ObjectIntersection{ DBL_MAX, Vec3(0.0f), Vec3(0.0f), info->o };
+		double u, v;		//coordenadas baricentricas
+		if (intersectTriangle(ray, vertex0, vertex1, vertex2, tempInfo, u, v))
+			intersec = true;
+		if (intersec && tempInfo->t < info->t) {
+			*info = *tempInfo;
+			if (normals.size() == 0)	//se não houver normais no .obj, calcula
+				info->n = faceNormal(vertex0, vertex1, vertex2);
+			else					//caso haja, usa interpolação para dar um resultado mais "Polido"
+				info->n = interpolateNormal(verticesIndexes, i, u, v);
+		}
+
+		//Salvar memória
+		delete[] tempInfo;
+		delete[] vertex0;
+		delete[] vertex1;
+		delete[] vertex2;
+	}
+	return intersec;
+}
+
 bool Mesh::intersectTriangle(const Ray& ray, const Vec3* vertex0, const Vec3* vertex1, const Vec3* vertex2,
 	ObjectIntersection* info, double& u, double& v)
 {
@@ -95,6 +128,26 @@ Vec3 Mesh::interpolateNormal(int& index, double & u, double & v) const
 	int normalIndex1 = vertexIndexes.at(index * 3 + 1).normal_index;
 	Vec3* normal1 = new Vec3(normals.at(normalIndex1 * 3), normals.at(normalIndex1 * 3 + 1), normals.at(normalIndex1 * 3 + 2));
 	int normalIndex2 = vertexIndexes.at(index * 3 + 2).normal_index;
+	Vec3* normal2 = new Vec3(normals.at(normalIndex2 * 3), normals.at(normalIndex2 * 3 + 1), normals.at(normalIndex2 * 3 + 2));
+
+	//interpolação de acordo com as coordenadas baricentricas u e v
+	Vec3 normal = Vec3((*normal0 * (1 - u - v)) + *normal1 * u + *normal2 * v);
+
+	delete[] normal0;
+	delete[] normal1;
+	delete[] normal2;
+
+	return normal;
+}
+
+Vec3 Mesh::interpolateNormal(const std::vector<const tinyobj::index_t*>& verticesIndexes, int& index, double & u, double & v) const
+{
+	//calculo das normais de cada vertice
+	int normalIndex0 = verticesIndexes.at(index * 3 + 0)->normal_index;
+	Vec3* normal0 = new Vec3(normals.at(normalIndex0 * 3), normals.at(normalIndex0 * 3 + 1), normals.at(normalIndex0 * 3 + 2));
+	int normalIndex1 = verticesIndexes.at(index * 3 + 1)->normal_index;
+	Vec3* normal1 = new Vec3(normals.at(normalIndex1 * 3), normals.at(normalIndex1 * 3 + 1), normals.at(normalIndex1 * 3 + 2));
+	int normalIndex2 = verticesIndexes.at(index * 3 + 2)->normal_index;
 	Vec3* normal2 = new Vec3(normals.at(normalIndex2 * 3), normals.at(normalIndex2 * 3 + 1), normals.at(normalIndex2 * 3 + 2));
 
 	//interpolação de acordo com as coordenadas baricentricas u e v

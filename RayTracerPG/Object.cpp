@@ -15,12 +15,9 @@ Object::Object(Sphere* sphere, Material* material) : geometry(sphere), material(
 bool Object::intersect(const Ray& r, ObjectIntersection* info)
 {
 	info->o = this;
-	if (bbox != nullptr) {
-		if (bbox->intersect(r) != nullptr)
-			return geometry->intersect(r, info);
-		else
-			return false;
-	} else
+	if (bbox != nullptr)
+		return bbox->intersect(r, info, (Mesh *)geometry);
+	else
 		return geometry->intersect(r, info);
 }
 
