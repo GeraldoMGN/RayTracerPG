@@ -117,6 +117,7 @@ void renderLine(int y, Image* image, Scene* scene, Camera* camera) {
 //Separa o processamento por linha
 void render(Image* image, Scene* scene, Camera* camera) {
 	for (int y = 0; y < image->getHeight(); y++) {
+		//renderLine(y, image, scene, camera);
 		threads.push_back(std::thread(renderLine, y, image, scene, camera));
 	}
 	std::for_each(threads.begin(), threads.end(), std::mem_fn(&std::thread::join));

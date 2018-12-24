@@ -8,13 +8,14 @@
 
 class AABBox {
 private:
+	//First point is always the one with the smaller x, y and z coordinates, and second has the bigger ones
 	Vec3* boundingPoints[2];
 	AABBox* subBoxes[8];
 	int level;
 	int maxLevel;
-	std::vector<tinyobj::index_t> faces;
+	std::vector<tinyobj::index_t*> faces;
 
 public:
-	AABBox(Vec3& boundingPoint1, Vec3& boundingPoint2, Mesh* mesh);
+	AABBox(Vec3* boundingPoint1, Vec3* boundingPoint2, Mesh* mesh, int maxLevel, int level);
 	const AABBox* intersect(const Ray& r) const;
 };

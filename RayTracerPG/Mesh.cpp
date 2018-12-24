@@ -1,5 +1,6 @@
 #include "Geometry.h"
 #include "Consts.h"
+#include <iostream>
 
 Mesh::Mesh(std::vector<double>& vertices, std::vector<tinyobj::shape_t>& shapes, std::vector<double>& normals)
 	: vertices(vertices), normals(normals)
@@ -16,7 +17,7 @@ Mesh::Mesh(std::vector<double>& vertices, std::vector<tinyobj::shape_t>& shapes,
 bool Mesh::intersect(const Ray& ray, ObjectIntersection* info) const
 {
 	bool intersec = false;
-	for (int i = 0; i < vertexIndexes.size(); i++) {
+	for (int i = 0; i < vertexIndexes.size() / 3; i++) {
 		//Calcula as 3 vertices do triangulo
 		int index0 = vertexIndexes.at(i * 3).vertex_index;
 		Vec3* vertex0 = new Vec3(vertices.at(index0 * 3), vertices.at(index0 * 3 + 1), vertices.at(index0 * 3 + 2));
@@ -111,11 +112,54 @@ Vec3 Mesh::faceNormal(Vec3* vertex0, Vec3* vertex1, Vec3* vertex2) const
 	return (*vertex1 - *vertex0).crossProduct(*vertex2 - *vertex0).normalize();
 }
 
-std::vector<tinyobj::index_t> Mesh::getFacesInBox(Vec3 * boundingPoints) const
+std::vector<tinyobj::index_t*> Mesh::getFacesInBox(Vec3* boundingPoints) const
 {
 	//Should go through all the faces(sequence of tree vertices) and return a list of 
 	//those who are inside de AABBox
 	//Note: Maybe i can extract a method to create the vertices from intersect() and interpolateNormal()
-	
-	return std::vector<tinyobj::index_t>();
+
+	for (int i = 0; i < vertexIndexes.size() / 3; i++) {
+		//Calcula as 3 vertices do triangulo
+		int index0 = vertexIndexes.at(i * 3).vertex_index;
+		Vec3* vertex0 = new Vec3(vertices.at(index0 * 3), vertices.at(index0 * 3 + 1), vertices.at(index0 * 3 + 2));
+		int index1 = vertexIndexes.at(i * 3 + 1).vertex_index;
+		Vec3* vertex1 = new Vec3(vertices.at(index1 * 3), vertices.at(index1 * 3 + 1), vertices.at(index1 * 3 + 2));
+		int index2 = vertexIndexes.at(i * 3 + 2).vertex_index;
+		Vec3* vertex2 = new Vec3(vertices.at(index2 * 3), vertices.at(index2 * 3 + 1), vertices.at(index2 * 3 + 2));
+
+		if (vertex0->getX() >= boundingPoints[0].getX() && vertex0->getX() <= boundingPoints[1].getX())
+			if (vertex0->getY() >= boundingPoints[0].getY() && vertex0->getY() <= boundingPoints[1].getY())
+				if (vertex0->getZ() >= boundingPoints[0].getZ() && vertex0->getZ() <= boundingPoints[1].getZ())
+					1 + 1;
+					//std::cout << "Vertex0 is inside the bbox" << std::endl;
+	}
+	return std::vector<tinyobj::index_t*>();
+}
+
+Vec3* Mesh::getSmallerCoordinates() const
+{
+	double x = DBL_MAX, y = DBL_MAX, z = DBL_MAX;
+	for (int i = 0; i < vertices.size(); i = i + 3) {
+		if (vertices.at(i) < x)
+			x = vertices.at(i);
+		if (vertices.at(i + 1) < y)
+			y = vertices.at(i + 1);
+		if (vertices.at(i + 2) < z)
+			z = vertices.at(i + 2);
+	}
+	return new Vec3(x, y, z);
+}
+
+Vec3* Mesh::getBiggerCoordinates() const
+{
+	double x = DBL_MIN, y = DBL_MIN, z = DBL_MIN;
+	for (int i = 0; i < vertices.size(); i = i + 3) {
+		if (vertices.at(i) > x)
+			x = vertices.at(i);
+		if (vertices.at(i + 1) > y)
+			y = vertices.at(i + 1);
+		if (vertices.at(i + 2) > z)
+			z = vertices.at(i + 2);
+	}
+	return new Vec3(x, y, z);
 }
