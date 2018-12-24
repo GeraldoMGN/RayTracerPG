@@ -47,7 +47,7 @@ public:
 	Vec3 faceNormal(Vec3* vertex0, Vec3* vertex1, Vec3* vertex2) const;
 
 	//Returns the faces indexes from the triangles inside an Axis Aligned Bound Box
-	std::vector<tinyobj::index_t*> getFacesInBox(Vec3* boundingPoints) const;
+	std::vector<const tinyobj::index_t*>* getFacesInBox(Vec3** boundingPoints) const;
 	Vec3* getSmallerCoordinates() const;
 	Vec3* getBiggerCoordinates() const;
 };

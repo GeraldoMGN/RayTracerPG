@@ -112,14 +112,13 @@ Vec3 Mesh::faceNormal(Vec3* vertex0, Vec3* vertex1, Vec3* vertex2) const
 	return (*vertex1 - *vertex0).crossProduct(*vertex2 - *vertex0).normalize();
 }
 
-std::vector<tinyobj::index_t*> Mesh::getFacesInBox(Vec3* boundingPoints) const
+std::vector<const tinyobj::index_t*>* Mesh::getFacesInBox(Vec3** boundingPoints) const
 {
 	//Should go through all the faces(sequence of tree vertices) and return a list of 
 	//those who are inside de AABBox
 	//Note: Maybe i can extract a method to create the vertices from intersect() and interpolateNormal()
-
+	std::vector<const tinyobj::index_t*> verticesReturn = {};
 	for (int i = 0; i < vertexIndexes.size() / 3; i++) {
-		//Calcula as 3 vertices do triangulo
 		int index0 = vertexIndexes.at(i * 3).vertex_index;
 		Vec3* vertex0 = new Vec3(vertices.at(index0 * 3), vertices.at(index0 * 3 + 1), vertices.at(index0 * 3 + 2));
 		int index1 = vertexIndexes.at(i * 3 + 1).vertex_index;
@@ -127,13 +126,32 @@ std::vector<tinyobj::index_t*> Mesh::getFacesInBox(Vec3* boundingPoints) const
 		int index2 = vertexIndexes.at(i * 3 + 2).vertex_index;
 		Vec3* vertex2 = new Vec3(vertices.at(index2 * 3), vertices.at(index2 * 3 + 1), vertices.at(index2 * 3 + 2));
 
-		if (vertex0->getX() >= boundingPoints[0].getX() && vertex0->getX() <= boundingPoints[1].getX())
-			if (vertex0->getY() >= boundingPoints[0].getY() && vertex0->getY() <= boundingPoints[1].getY())
-				if (vertex0->getZ() >= boundingPoints[0].getZ() && vertex0->getZ() <= boundingPoints[1].getZ())
-					1 + 1;
-					//std::cout << "Vertex0 is inside the bbox" << std::endl;
+		if (vertex0->getX() >= boundingPoints[0]->getX() && vertex0->getX() <= boundingPoints[1]->getX())
+			if (vertex0->getY() >= boundingPoints[0]->getY() && vertex0->getY() <= boundingPoints[1]->getY())
+				if (vertex0->getZ() >= boundingPoints[0]->getZ() && vertex0->getZ() <= boundingPoints[1]->getZ()) {
+					verticesReturn.push_back(&vertexIndexes.at(i * 3));
+					verticesReturn.push_back(&vertexIndexes.at(i * 3 + 1));
+					verticesReturn.push_back(&vertexIndexes.at(i * 3 + 2));
+					continue;
+				}
+		if (vertex1->getX() >= boundingPoints[0]->getX() && vertex1->getX() <= boundingPoints[1]->getX())
+			if (vertex1->getY() >= boundingPoints[0]->getY() && vertex1->getY() <= boundingPoints[1]->getY())
+				if (vertex1->getZ() >= boundingPoints[0]->getZ() && vertex1->getZ() <= boundingPoints[1]->getZ()) {
+					verticesReturn.push_back(&vertexIndexes.at(i * 3));
+					verticesReturn.push_back(&vertexIndexes.at(i * 3 + 1));
+					verticesReturn.push_back(&vertexIndexes.at(i * 3 + 2));
+					continue;
+				}
+		if (vertex2->getX() >= boundingPoints[0]->getX() && vertex2->getX() <= boundingPoints[1]->getX())
+			if (vertex2->getY() >= boundingPoints[0]->getY() && vertex2->getY() <= boundingPoints[1]->getY())
+				if (vertex2->getZ() >= boundingPoints[0]->getZ() && vertex2->getZ() <= boundingPoints[1]->getZ()) {
+					verticesReturn.push_back(&vertexIndexes.at(i * 3));
+					verticesReturn.push_back(&vertexIndexes.at(i * 3 + 1));
+					verticesReturn.push_back(&vertexIndexes.at(i * 3 + 2));
+					continue;
+				}
 	}
-	return std::vector<tinyobj::index_t*>();
+	return new std::vector<const tinyobj::index_t*>(verticesReturn);
 }
 
 Vec3* Mesh::getSmallerCoordinates() const

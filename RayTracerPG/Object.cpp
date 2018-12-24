@@ -6,7 +6,7 @@
 Object::Object(Mesh* mesh, Material* material) : geometry(mesh), material(material) {
 	Vec3* boundingPoint0 = mesh->getSmallerCoordinates();
 	Vec3* boundingPoint1 = mesh->getBiggerCoordinates();
-	bbox = new AABBox(boundingPoint0, boundingPoint1, mesh, 0, 0);
+	bbox = new AABBox(boundingPoint0, boundingPoint1, mesh, 3, 0);
 }
 
 Object::Object(Sphere* sphere, Material* material) : geometry(sphere), material(material) {
