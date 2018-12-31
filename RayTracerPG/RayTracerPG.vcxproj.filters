@@ -109,5 +109,8 @@
     <Text Include="config.txt">
       <Filter>Resource Files</Filter>
     </Text>
+    <Text Include="BUGandTODO.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>

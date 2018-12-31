@@ -1,5 +1,4 @@
 #include "AABBox.h"
-#include <iostream>
 
 AABBox::AABBox(Vec3* boundingPoint1, Vec3* boundingPoint2, Mesh* mesh, int maxLevel, int level) : maxLevel(maxLevel), level(level) {
 	boundingPoints = new Vec3*[2];
