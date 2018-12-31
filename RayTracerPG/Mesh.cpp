@@ -39,10 +39,10 @@ bool Mesh::intersect(const Ray& ray, ObjectIntersection* info) const
 		}
 
 		//Salvar memória
-		delete[] tempInfo;
-		delete[] vertex0;
-		delete[] vertex1;
-		delete[] vertex2;
+		delete tempInfo;
+		delete vertex0;
+		delete vertex1;
+		delete vertex2;
 	}
 	return intersec;
 }
@@ -72,10 +72,10 @@ bool Mesh::intersect(const Ray& ray, ObjectIntersection* info, const std::vector
 		}
 
 		//Salvar memória
-		delete[] tempInfo;
-		delete[] vertex0;
-		delete[] vertex1;
-		delete[] vertex2;
+		delete tempInfo;
+		delete vertex0;
+		delete vertex1;
+		delete vertex2;
 	}
 	return intersec;
 }
@@ -133,9 +133,9 @@ Vec3 Mesh::interpolateNormal(int& index, double & u, double & v) const
 	//interpolação de acordo com as coordenadas baricentricas u e v
 	Vec3 normal = Vec3((*normal0 * (1 - u - v)) + *normal1 * u + *normal2 * v);
 
-	delete[] normal0;
-	delete[] normal1;
-	delete[] normal2;
+	delete normal0;
+	delete normal1;
+	delete normal2;
 
 	return normal;
 }
@@ -153,9 +153,9 @@ Vec3 Mesh::interpolateNormal(const std::vector<const tinyobj::index_t*>& vertice
 	//interpolação de acordo com as coordenadas baricentricas u e v
 	Vec3 normal = Vec3((*normal0 * (1 - u - v)) + *normal1 * u + *normal2 * v);
 
-	delete[] normal0;
-	delete[] normal1;
-	delete[] normal2;
+	delete normal0;
+	delete normal1;
+	delete normal2;
 
 	return normal;
 }
@@ -163,55 +163,6 @@ Vec3 Mesh::interpolateNormal(const std::vector<const tinyobj::index_t*>& vertice
 Vec3 Mesh::faceNormal(Vec3* vertex0, Vec3* vertex1, Vec3* vertex2) const
 {
 	return (*vertex1 - *vertex0).crossProduct(*vertex2 - *vertex0).normalize();
-}
-
-std::vector<const tinyobj::index_t*>* Mesh::getFacesInBox(Vec3** boundingPoints) const
-{
-	//Should go through all the faces(sequence of tree vertices) and return a list of 
-	//those who are inside de AABBox
-	//Note: Maybe i can extract a method to create the vertices from intersect() and interpolateNormal()
-	std::vector<const tinyobj::index_t*> verticesReturn = {};
-	Vec3* vertex0 = nullptr;
-	Vec3* vertex1 = nullptr;
-	Vec3* vertex2 = nullptr;
-	
-	for (int i = 0; i < vertexIndexes.size() / 3; i++) {
-		delete[] vertex0;
-		delete[] vertex1;
-		delete[] vertex2;
-		int index0 = vertexIndexes.at(i * 3).vertex_index;
-		vertex0 = new Vec3(vertices.at(index0 * 3), vertices.at(index0 * 3 + 1), vertices.at(index0 * 3 + 2));
-		int index1 = vertexIndexes.at(i * 3 + 1).vertex_index;
-		vertex1 = new Vec3(vertices.at(index1 * 3), vertices.at(index1 * 3 + 1), vertices.at(index1 * 3 + 2));
-		int index2 = vertexIndexes.at(i * 3 + 2).vertex_index;
-		vertex2 = new Vec3(vertices.at(index2 * 3), vertices.at(index2 * 3 + 1), vertices.at(index2 * 3 + 2));
-
-		if (vertex0->getX() >= (boundingPoints[0]->getX() - VERTEXBIAS) && vertex0->getX() <= (boundingPoints[1]->getX() + VERTEXBIAS))
-			if (vertex0->getY() >= (boundingPoints[0]->getY() - VERTEXBIAS) && vertex0->getY() <= (boundingPoints[1]->getY() + VERTEXBIAS))
-				if (vertex0->getZ() >= (boundingPoints[0]->getZ() - VERTEXBIAS) && vertex0->getZ() <= (boundingPoints[1]->getZ() + VERTEXBIAS)) {
-					verticesReturn.push_back(&vertexIndexes.at(i * 3));
-					verticesReturn.push_back(&vertexIndexes.at(i * 3 + 1));
-					verticesReturn.push_back(&vertexIndexes.at(i * 3 + 2));
-					continue;
-				}
-		if (vertex1->getX() >= (boundingPoints[0]->getX() - VERTEXBIAS) && vertex1->getX() <= (boundingPoints[1]->getX() + VERTEXBIAS))
-			if (vertex1->getY() >= (boundingPoints[0]->getY() - VERTEXBIAS) && vertex1->getY() <= (boundingPoints[1]->getY() + VERTEXBIAS))
-				if (vertex1->getZ() >= (boundingPoints[0]->getZ() - VERTEXBIAS) && vertex1->getZ() <= (boundingPoints[1]->getZ() + VERTEXBIAS)) {
-					verticesReturn.push_back(&vertexIndexes.at(i * 3));
-					verticesReturn.push_back(&vertexIndexes.at(i * 3 + 1));
-					verticesReturn.push_back(&vertexIndexes.at(i * 3 + 2));
-					continue;
-				}
-		if (vertex2->getX() >= (boundingPoints[0]->getX() - VERTEXBIAS) && vertex2->getX() <= (boundingPoints[1]->getX() + VERTEXBIAS))
-			if (vertex2->getY() >= (boundingPoints[0]->getY() - VERTEXBIAS) && vertex2->getY() <= (boundingPoints[1]->getY() + VERTEXBIAS))
-				if (vertex2->getZ() >= (boundingPoints[0]->getZ() - VERTEXBIAS) && vertex2->getZ() <= (boundingPoints[1]->getZ() + VERTEXBIAS)) {
-					verticesReturn.push_back(&vertexIndexes.at(i * 3));
-					verticesReturn.push_back(&vertexIndexes.at(i * 3 + 1));
-					verticesReturn.push_back(&vertexIndexes.at(i * 3 + 2));
-					continue;
-				}
-	}
-	return new std::vector<const tinyobj::index_t*>(verticesReturn);
 }
 
 Vec3* Mesh::getSmallerCoordinates() const

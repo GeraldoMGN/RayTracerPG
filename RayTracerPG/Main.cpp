@@ -28,14 +28,14 @@ double facingRatio(Vec3 vector1, Vec3 vector2) {
 
 //Pega o ObjectIntersection com as informações da interseção mais proxima
 ObjectIntersection* castRay(Ray& ray, Scene* scene) {
-	ObjectIntersection* intersecInfo = new ObjectIntersection{DBL_MAX, Vec3(0.0f), Vec3(0.0f), NULL};
+	ObjectIntersection* intersecInfo = new ObjectIntersection{ DBL_MAX, Vec3(0.0f), Vec3(0.0f), NULL };
 	
 	//compara com cada objeto da cena para ver se há ponto de interseção mais próximo que o anterior
 	for (int k = 0; k < scene->getNumberObjects(); k++) {
-		ObjectIntersection* tempInfo = new ObjectIntersection{ DBL_MAX, Vec3(0.0f), Vec3(0.0f), NULL};
+		ObjectIntersection* tempInfo = new ObjectIntersection{ DBL_MAX, Vec3(0.0f), Vec3(0.0f), NULL };
 		if (scene->getObject(k)->intersect(ray, tempInfo)) {
 			if (tempInfo->t < intersecInfo->t) {
-				delete[] intersecInfo;
+				delete intersecInfo;
 				intersecInfo = tempInfo;
 			}
 		}
@@ -52,8 +52,9 @@ Vec3* backgroundColor(const int& x, const int& y, const int& maxX, const int& ma
 	double yDistance = abs(y - maxY/2);
 	double distance = sqrt((xDistance * xDistance) + (yDistance * yDistance));
 	double gradient = distance / maxDistance;
-	Vec3 color = Vec3(0.3) * gradient + Vec3(0.6) * (1.0 - gradient);
-	return new Vec3(color);
+	Vec3* color = new Vec3(0);
+	*color = Vec3(0.3) * gradient + Vec3(0.6) * (1.0 - gradient);
+	return color;
 }
 
 //calcula a cor do pixel
@@ -61,7 +62,7 @@ Vec3* shade(Ray& ray, ObjectIntersection* intersecInfo, Scene* scene) {
 	if (intersecInfo == NULL)
 		return NULL;
 
-	Vec3 color = Vec3(0.0f);
+	Vec3* color = new Vec3(0.0f);
 	Vec3 difuse = Vec3(0.0f);
 	Vec3 specular = Vec3(0.0f);
 	Vec3 materialColor = intersecInfo->o->getMaterial()->getColor();
@@ -86,14 +87,14 @@ Vec3* shade(Ray& ray, ObjectIntersection* intersecInfo, Scene* scene) {
 			Vec3 reflected = lightDirection.reflect(intersecInfo->n);
 			specular = specular + (lightIntensity * std::pow(facingRatio(reflected, lightDirection), intersecInfo->o->getMaterial()->getAlpha()));
 		}
-		delete[] shadowIntersec;
+		delete shadowIntersec;
 	}
 	
 	//adição dos diversos componentes (difuso, especular e emissivo)
-	color = difuse    * intersecInfo->o->getMaterial()->getKd() + 
+	*color = difuse    * intersecInfo->o->getMaterial()->getKd() + 
 		specular      * intersecInfo->o->getMaterial()->getKs() +
 		materialColor * intersecInfo->o->getMaterial()->getKa();
-	return new Vec3(color);
+	return color;
 }
 
 void renderLine(int y, Image* image, Scene* scene, Camera* camera) {
@@ -110,7 +111,7 @@ void renderLine(int y, Image* image, Scene* scene, Camera* camera) {
 			pixelColor = backgroundColor(x, y, image->getWidth(), image->getHeight());
 		image->SetPixel(x, y, pixelColor);
 
-		delete[] intersecInfo;
+		delete intersecInfo;
 	}
 }
 

@@ -5,9 +5,9 @@
 
 Image::Image(int width, int height) : width(width), height(height) {
 	buffer = new Vec3*[width * height];
-	for (int i = 0; i < width * height; i++) {
-		buffer[i] = new Vec3(1.0f, 0.0f, 1.0f);
-	}
+	//for (int i = 0; i < width * height; i++) {
+	//	buffer[i] = new Vec3(1.0f, 0.0f, 1.0f);
+	//}
 }
 
 void Image::SetPixel(int x, int y, Vec3* color) {
