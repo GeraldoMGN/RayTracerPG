@@ -1,10 +1,8 @@
-#coment·rio
-
-#resoluÁ„o
+#resolu√ß√£o
 #res width height
 res 1280 720
 
-#c‚mera
+#c√¢mera
 #camera px py pz tx ty tz ux uy uz fov f
 camera 400 500 500 100 250 0 0 1 0 75 1.0
 
